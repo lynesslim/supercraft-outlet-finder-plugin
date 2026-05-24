@@ -225,7 +225,8 @@ class SC_OF_Shortcode
                 center: [<?php echo $map_lat; ?>, <?php echo $map_lng; ?>],
                 zoom: <?php echo $map_zoom; ?>,
                 zoomControl: false,
-                attributionControl: true
+                attributionControl: true,
+                scrollWheelZoom: false
             });
 
             L.control.zoom({
