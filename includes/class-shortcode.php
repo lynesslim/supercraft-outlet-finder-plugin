@@ -4,11 +4,11 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class TS_TOF_Shortcode
+class SC_OF_Shortcode
 {
     public function __construct()
     {
-        add_shortcode('ts_tyre_outlets', [$this, 'render']);
+        add_shortcode('supercraft_outlets', [$this, 'render']);
     }
 
     public function render()
@@ -19,18 +19,18 @@ class TS_TOF_Shortcode
 
         if (empty($outlets)) {
             return '<p style="padding:40px;text-align:center;color:#555;">' .
-                   __('No outlets found. Add outlets in TS Outlets → Add New.', 'ts-tof') .
+                   __('No outlets found. Add outlets in Outlets → Add New.', 'supercraft-of') .
                    '</p>';
         }
 
-        $brand       = TS_TOF_Settings::get('brand_name');
-        $brand_sub   = TS_TOF_Settings::get('brand_subtitle');
-        $region      = TS_TOF_Settings::get('region');
-        $region_sub  = TS_TOF_Settings::get('region_sub');
-        $map_lat     = TS_TOF_Settings::get('map_center_lat');
-        $map_lng     = TS_TOF_Settings::get('map_center_lng');
-        $map_zoom    = TS_TOF_Settings::get('map_zoom');
-        $fly_zoom    = TS_TOF_Settings::get('fly_zoom');
+        $brand       = SC_OF_Settings::get('brand_name');
+        $brand_sub   = SC_OF_Settings::get('brand_subtitle');
+        $region      = SC_OF_Settings::get('region');
+        $region_sub  = SC_OF_Settings::get('region_sub');
+        $map_lat     = SC_OF_Settings::get('map_center_lat');
+        $map_lng     = SC_OF_Settings::get('map_center_lng');
+        $map_zoom    = SC_OF_Settings::get('map_zoom');
+        $fly_zoom    = SC_OF_Settings::get('fly_zoom');
 
         $brand_upper = strtoupper($brand);
         $brand_parts = explode(' ', $brand_upper, 2);
@@ -43,7 +43,7 @@ class TS_TOF_Shortcode
 
         $this->render_styles();
         ?>
-        <div class="ts-tyre-outlet-widget">
+        <div class="sc-outlet-widget">
 
             <div id="cur"></div>
             <div id="cur-dot"></div>
@@ -183,7 +183,7 @@ class TS_TOF_Shortcode
 
         <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const root = document.querySelector('.ts-tyre-outlet-widget');
+            const root = document.querySelector('.sc-outlet-widget');
             if (!root) return;
 
             if (typeof L === 'undefined') {
@@ -242,14 +242,14 @@ class TS_TOF_Shortcode
             let selId = null;
 
             function mkIcon(o, act) {
-                let imgHtml = o.img ? '<div class="ts-tip-img" style="background-image:url('+o.img+')"></div>' : '';
+                let imgHtml = o.img ? '<div class="sc-tip-img" style="background-image:url('+o.img+')"></div>' : '';
                 return L.divIcon({
                     className: '',
                     html:
-                        '<div class="ts-m' + (act ? ' act' : '') + '" id="mw' + o.id + '">' +
-                        '<div class="ts-ring"></div>' +
-                        '<div class="ts-core">' + String(o.id).padStart(2, '0') + '</div>' +
-                        '<div class="ts-tip ' + (o.img ? 'has-img' : '') + '">' + imgHtml + '<div class="ts-tip-txt">' + o.name + '</div></div>' +
+                        '<div class="sc-m' + (act ? ' act' : '') + '" id="mw' + o.id + '">' +
+                        '<div class="sc-ring"></div>' +
+                        '<div class="sc-core">' + String(o.id).padStart(2, '0') + '</div>' +
+                        '<div class="sc-tip ' + (o.img ? 'has-img' : '') + '">' + imgHtml + '<div class="sc-tip-txt">' + o.name + '</div></div>' +
                         '</div>',
                     iconSize: [44, 44],
                     iconAnchor: [22, 22],
@@ -422,7 +422,7 @@ class TS_TOF_Shortcode
     private function render_styles()
     {
         $s = function ($key) {
-            return TS_TOF_Settings::get($key);
+            return SC_OF_Settings::get($key);
         };
         ?>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
@@ -432,41 +432,47 @@ class TS_TOF_Shortcode
         <link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:ital,wght@0,300;0,400;0,600;0,700;1,300&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
 
         <style>
-            .ts-tyre-outlet-widget,
-            .ts-tyre-outlet-widget *,
-            .ts-tyre-outlet-widget *::before,
-            .ts-tyre-outlet-widget *::after {
+            .sc-outlet-widget,
+            .sc-outlet-widget *,
+            .sc-outlet-widget *::before,
+            .sc-outlet-widget *::after {
                 box-sizing: border-box;
             }
 
-            .ts-tyre-outlet-widget {
-                --black: <?php echo $s('color_bg'); ?>;
-                --dark: <?php echo $s('color_dark'); ?>;
-                --surface: <?php echo $s('color_surface'); ?>;
-                --surface2: <?php echo $s('color_surface2'); ?>;
+            .sc-outlet-widget {
+                /* Color variables - Support Elementor Global variables with plugin settings as fallbacks */
+                --gold: var(--e-global-color-primary, <?php echo $s('color_primary'); ?>);
+                --black: var(--e-global-color-bg, <?php echo $s('color_bg'); ?>);
+                --dark: var(--e-global-color-sidebar-bg, <?php echo $s('color_dark'); ?>);
+                --surface: var(--e-global-color-surface, <?php echo $s('color_surface'); ?>);
+                --surface2: var(--e-global-color-secondary, <?php echo $s('color_surface2'); ?>);
                 --border: <?php echo $s('color_border'); ?>;
                 --border2: <?php echo $s('color_border2'); ?>;
-                --gold: <?php echo $s('color_primary'); ?>;
-                --gold-dim: color-mix(in srgb, <?php echo $s('color_primary'); ?> 8%, transparent);
-                --gold-glow: color-mix(in srgb, <?php echo $s('color_primary'); ?> 25%, transparent);
+                --white: var(--e-global-color-text, <?php echo $s('color_text'); ?>);
+                --muted: var(--e-global-color-muted, <?php echo $s('color_muted'); ?>);
+                --muted2: var(--e-global-color-accent, <?php echo $s('color_muted2'); ?>);
+                
+                --gold-dim: color-mix(in srgb, var(--gold) 8%, transparent);
+                --gold-glow: color-mix(in srgb, var(--gold) 25%, transparent);
                 --red: #E03030;
-                --white: <?php echo $s('color_text'); ?>;
-                --muted: <?php echo $s('color_muted'); ?>;
-                --muted2: <?php echo $s('color_muted2'); ?>;
                 --sw: 380px;
+
+                /* Typography variables - Support Elementor Global Typography with plugin fonts as fallbacks */
+                --font-primary: var(--e-global-typography-primary-font-family, 'Anton'), sans-serif;
+                --font-body: var(--e-global-typography-text-font-family, 'Barlow Condensed'), sans-serif;
 
                 width: 100%;
                 height: 100vh;
                 min-height: 720px;
                 background: var(--black);
                 color: var(--white);
-                font-family: 'Barlow Condensed', sans-serif;
+                font-family: var(--font-body);
                 overflow: hidden;
                 position: relative;
                 cursor: none;
             }
 
-            .ts-tyre-outlet-widget #cur {
+            .sc-outlet-widget #cur {
                 position: fixed;
                 width: 10px;
                 height: 10px;
@@ -480,7 +486,7 @@ class TS_TOF_Shortcode
                 opacity: 0;
             }
 
-            .ts-tyre-outlet-widget #cur-dot {
+            .sc-outlet-widget #cur-dot {
                 position: fixed;
                 width: 3px;
                 height: 3px;
@@ -493,31 +499,31 @@ class TS_TOF_Shortcode
                 transition: opacity .2s;
             }
 
-            .ts-tyre-outlet-widget:hover #cur,
-            .ts-tyre-outlet-widget:hover #cur-dot {
+            .sc-outlet-widget:hover #cur,
+            .sc-outlet-widget:hover #cur-dot {
                 opacity: 1;
             }
 
-            .ts-tyre-outlet-widget #cur.expand {
+            .sc-outlet-widget #cur.expand {
                 width: 28px;
                 height: 28px;
                 border-color: color-mix(in srgb, var(--gold) 40%, transparent);
             }
 
-            .ts-tyre-outlet-widget #cur.click {
+            .sc-outlet-widget #cur.click {
                 background: var(--gold-dim);
                 width: 8px;
                 height: 8px;
             }
 
-            .ts-tyre-outlet-widget #app {
+            .sc-outlet-widget #app {
                 display: flex;
                 width: 100%;
                 height: 100%;
                 position: relative;
             }
 
-            .ts-tyre-outlet-widget #sb {
+            .sc-outlet-widget #sb {
                 width: var(--sw);
                 flex-shrink: 0;
                 background: var(--dark);
@@ -529,7 +535,7 @@ class TS_TOF_Shortcode
                 overflow: hidden;
             }
 
-            .ts-tyre-outlet-widget #sb::after {
+            .sc-outlet-widget #sb::after {
                 content: '';
                 position: absolute;
                 inset: 0;
@@ -538,7 +544,7 @@ class TS_TOF_Shortcode
                 z-index: 0;
             }
 
-            .ts-tyre-outlet-widget #hdr {
+            .sc-outlet-widget #hdr {
                 padding: 26px 28px 20px;
                 border-bottom: 1px solid var(--border);
                 position: relative;
@@ -546,32 +552,32 @@ class TS_TOF_Shortcode
                 flex-shrink: 0;
             }
 
-            .ts-tyre-outlet-widget .logo-row {
+            .sc-outlet-widget .logo-row {
                 display: flex;
                 align-items: center;
                 gap: 12px;
                 margin-bottom: 16px;
             }
 
-            .ts-tyre-outlet-widget .logo-svg {
+            .sc-outlet-widget .logo-svg {
                 flex-shrink: 0;
                 color: var(--gold);
             }
 
-            .ts-tyre-outlet-widget .brand {
-                font-family: 'Anton', sans-serif;
+            .sc-outlet-widget .brand {
+                font-family: var(--font-primary);
                 font-size: 26px;
                 letter-spacing: 3px;
                 line-height: 1;
                 color: var(--white);
             }
 
-            .ts-tyre-outlet-widget .brand em {
+            .sc-outlet-widget .brand em {
                 color: var(--gold);
                 font-style: normal;
             }
 
-            .ts-tyre-outlet-widget .sub {
+            .sc-outlet-widget .sub {
                 font-size: 9px;
                 letter-spacing: 5px;
                 text-transform: uppercase;
@@ -579,7 +585,7 @@ class TS_TOF_Shortcode
                 margin-top: 3px;
             }
 
-            .ts-tyre-outlet-widget .eyebrow {
+            .sc-outlet-widget .eyebrow {
                 font-size: 9px;
                 letter-spacing: 5px;
                 text-transform: uppercase;
@@ -587,15 +593,15 @@ class TS_TOF_Shortcode
                 margin-bottom: 5px;
             }
 
-            .ts-tyre-outlet-widget .headline {
-                font-family: 'Anton', sans-serif;
+            .sc-outlet-widget .headline {
+                font-family: var(--font-primary);
                 font-size: 20px;
                 letter-spacing: 2px;
                 color: var(--white);
                 line-height: 1;
             }
 
-            .ts-tyre-outlet-widget #srch-wrap {
+            .sc-outlet-widget #srch-wrap {
                 padding: 14px 28px;
                 border-bottom: 1px solid var(--border);
                 position: relative;
@@ -603,7 +609,7 @@ class TS_TOF_Shortcode
                 flex-shrink: 0;
             }
 
-            .ts-tyre-outlet-widget #srch-ico {
+            .sc-outlet-widget #srch-ico {
                 position: absolute;
                 left: 42px;
                 top: 50%;
@@ -613,14 +619,14 @@ class TS_TOF_Shortcode
                 pointer-events: none;
             }
 
-            .ts-tyre-outlet-widget #srch {
+            .sc-outlet-widget #srch {
                 width: 100%;
                 background: var(--surface);
                 border: 1px solid var(--border);
                 border-radius: 3px;
                 padding: 9px 14px 9px 36px;
                 color: var(--white);
-                font-family: 'Barlow Condensed', sans-serif;
+                font-family: var(--font-body);
                 font-size: 14px;
                 letter-spacing: .5px;
                 outline: none;
@@ -628,16 +634,16 @@ class TS_TOF_Shortcode
                 cursor: none;
             }
 
-            .ts-tyre-outlet-widget #srch:focus {
+            .sc-outlet-widget #srch:focus {
                 border-color: color-mix(in srgb, var(--gold) 35%, transparent);
                 background: var(--surface2);
             }
 
-            .ts-tyre-outlet-widget #srch::placeholder {
+            .sc-outlet-widget #srch::placeholder {
                 color: var(--muted);
             }
 
-            .ts-tyre-outlet-widget #list {
+            .sc-outlet-widget #list {
                 flex: 1;
                 overflow-y: auto;
                 overflow-x: hidden;
@@ -646,20 +652,20 @@ class TS_TOF_Shortcode
                 padding: 6px 0;
             }
 
-            .ts-tyre-outlet-widget #list::-webkit-scrollbar {
+            .sc-outlet-widget #list::-webkit-scrollbar {
                 width: 2px;
             }
 
-            .ts-tyre-outlet-widget #list::-webkit-scrollbar-track {
+            .sc-outlet-widget #list::-webkit-scrollbar-track {
                 background: transparent;
             }
 
-            .ts-tyre-outlet-widget #list::-webkit-scrollbar-thumb {
+            .sc-outlet-widget #list::-webkit-scrollbar-thumb {
                 background: var(--border2);
                 border-radius: 1px;
             }
 
-            .ts-tyre-outlet-widget .oi {
+            .sc-outlet-widget .oi {
                 display: flex;
                 align-items: center;
                 padding: 13px 28px;
@@ -669,10 +675,10 @@ class TS_TOF_Shortcode
                 gap: 14px;
                 overflow: hidden;
                 border-bottom: 1px solid var(--border);
-                animation: tsTyreSi .45s cubic-bezier(.16,1,.3,1) both;
+                animation: scSi .45s cubic-bezier(.16,1,.3,1) both;
             }
 
-            .ts-tyre-outlet-widget .oi::before {
+            .sc-outlet-widget .oi::before {
                 content: '';
                 position: absolute;
                 left: 0;
@@ -685,19 +691,19 @@ class TS_TOF_Shortcode
                 transform-origin: bottom;
             }
 
-            .ts-tyre-outlet-widget .oi:hover,
-            .ts-tyre-outlet-widget .oi.act {
+            .sc-outlet-widget .oi:hover,
+            .sc-outlet-widget .oi.act {
                 background: var(--gold-dim);
             }
 
-            .ts-tyre-outlet-widget .oi:hover::before,
-            .ts-tyre-outlet-widget .oi.act::before {
+            .sc-outlet-widget .oi:hover::before,
+            .sc-outlet-widget .oi.act::before {
                 transform: scaleY(1);
                 transform-origin: top;
             }
 
-            .ts-tyre-outlet-widget .oi-num {
-                font-family: 'Anton', sans-serif;
+            .sc-outlet-widget .oi-num {
+                font-family: var(--font-primary);
                 font-size: 11px;
                 color: var(--gold);
                 min-width: 24px;
@@ -706,17 +712,17 @@ class TS_TOF_Shortcode
                 transition: opacity .2s;
             }
 
-            .ts-tyre-outlet-widget .oi:hover .oi-num,
-            .ts-tyre-outlet-widget .oi.act .oi-num {
+            .sc-outlet-widget .oi:hover .oi-num,
+            .sc-outlet-widget .oi.act .oi-num {
                 opacity: 1;
             }
 
-            .ts-tyre-outlet-widget .oi-info {
+            .sc-outlet-widget .oi-info {
                 flex: 1;
                 min-width: 0;
             }
 
-            .ts-tyre-outlet-widget .oi-name {
+            .sc-outlet-widget .oi-name {
                 font-size: 15px;
                 font-weight: 700;
                 letter-spacing: 1.5px;
@@ -725,7 +731,7 @@ class TS_TOF_Shortcode
                 line-height: 1.05;
             }
 
-            .ts-tyre-outlet-widget .oi-area {
+            .sc-outlet-widget .oi-area {
                 font-size: 10px;
                 letter-spacing: 2px;
                 color: var(--muted2);
@@ -733,19 +739,19 @@ class TS_TOF_Shortcode
                 margin-top: 3px;
             }
 
-            .ts-tyre-outlet-widget .oi-arr {
+            .sc-outlet-widget .oi-arr {
                 color: var(--muted);
                 font-size: 12px;
                 transition: transform .2s, color .2s;
             }
 
-            .ts-tyre-outlet-widget .oi:hover .oi-arr,
-            .ts-tyre-outlet-widget .oi.act .oi-arr {
+            .sc-outlet-widget .oi:hover .oi-arr,
+            .sc-outlet-widget .oi.act .oi-arr {
                 transform: translateX(4px);
                 color: var(--gold);
             }
 
-            .ts-tyre-outlet-widget .no-res {
+            .sc-outlet-widget .no-res {
                 padding: 48px 28px;
                 text-align: center;
                 color: var(--muted);
@@ -754,12 +760,12 @@ class TS_TOF_Shortcode
                 text-transform: uppercase;
             }
 
-            @keyframes tsTyreSi {
+            @keyframes scSi {
                 from { opacity: 0; transform: translateX(-16px); }
                 to   { opacity: 1; transform: translateX(0); }
             }
 
-            .ts-tyre-outlet-widget #ftr {
+            .sc-outlet-widget #ftr {
                 padding: 14px 28px;
                 border-top: 1px solid var(--border);
                 display: flex;
@@ -770,21 +776,21 @@ class TS_TOF_Shortcode
                 flex-shrink: 0;
             }
 
-            .ts-tyre-outlet-widget .ftr-label {
+            .sc-outlet-widget .ftr-label {
                 font-size: 9px;
                 letter-spacing: 4px;
                 text-transform: uppercase;
                 color: var(--muted);
             }
 
-            .ts-tyre-outlet-widget .ftr-num {
-                font-family: 'Anton', sans-serif;
+            .sc-outlet-widget .ftr-num {
+                font-family: var(--font-primary);
                 font-size: 22px;
                 color: var(--gold);
                 line-height: 1;
             }
 
-            .ts-tyre-outlet-widget #det {
+            .sc-outlet-widget #det {
                 position: absolute;
                 inset: 0;
                 background: var(--dark);
@@ -797,7 +803,7 @@ class TS_TOF_Shortcode
                 overflow: hidden;
             }
 
-            .ts-tyre-outlet-widget #det::after {
+            .sc-outlet-widget #det::after {
                 content: '';
                 position: absolute;
                 inset: 0;
@@ -806,11 +812,11 @@ class TS_TOF_Shortcode
                 z-index: 0;
             }
 
-            .ts-tyre-outlet-widget #det.open {
+            .sc-outlet-widget #det.open {
                 transform: translateX(0);
             }
 
-            .ts-tyre-outlet-widget #back {
+            .sc-outlet-widget #back {
                 display: flex;
                 align-items: center;
                 gap: 8px;
@@ -826,20 +832,20 @@ class TS_TOF_Shortcode
                 z-index: 1;
             }
 
-            .ts-tyre-outlet-widget #back:hover {
+            .sc-outlet-widget #back:hover {
                 color: var(--gold);
             }
 
-            .ts-tyre-outlet-widget #back svg {
+            .sc-outlet-widget #back svg {
                 transition: transform .2s;
             }
 
-            .ts-tyre-outlet-widget #back:hover svg {
+            .sc-outlet-widget #back:hover svg {
                 transform: translateX(-3px);
             }
 
-            .ts-tyre-outlet-widget .d-bignum {
-                font-family: 'Anton', sans-serif;
+            .sc-outlet-widget .d-bignum {
+                font-family: var(--font-primary);
                 font-size: 100px;
                 line-height: 1;
                 color: var(--surface2);
@@ -852,8 +858,8 @@ class TS_TOF_Shortcode
                 transition: opacity .4s;
             }
 
-            .ts-tyre-outlet-widget .d-title {
-                font-family: 'Anton', sans-serif;
+            .sc-outlet-widget .d-title {
+                font-family: var(--font-primary);
                 font-size: 34px;
                 line-height: 1.05;
                 letter-spacing: 2px;
@@ -864,7 +870,7 @@ class TS_TOF_Shortcode
                 margin-bottom: 6px;
             }
 
-            .ts-tyre-outlet-widget .d-tag {
+            .sc-outlet-widget .d-tag {
                 display: inline-block;
                 background: var(--gold);
                 color: var(--black);
@@ -880,9 +886,10 @@ class TS_TOF_Shortcode
                 width: fit-content;
             }
 
-            .ts-tyre-outlet-widget .d-img-wrap {
+            /* Aspect ratio set to 4:3 for Featured Images in detail panel */
+            .sc-outlet-widget .d-img-wrap {
                 width: 100%;
-                height: 140px;
+                aspect-ratio: 4 / 3;
                 background-color: var(--surface2);
                 border-radius: 4px;
                 overflow: hidden;
@@ -891,13 +898,15 @@ class TS_TOF_Shortcode
                 z-index: 1;
                 border: 1px solid var(--border);
             }
-            .ts-tyre-outlet-widget .d-img-wrap img {
+            
+            .sc-outlet-widget .d-img-wrap img {
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
                 display: block;
             }
-            .ts-tyre-outlet-widget .d-div {
+            
+            .sc-outlet-widget .d-div {
                 height: 1px;
                 background: var(--border);
                 margin-bottom: 22px;
@@ -905,7 +914,7 @@ class TS_TOF_Shortcode
                 z-index: 1;
             }
 
-            .ts-tyre-outlet-widget .d-row {
+            .sc-outlet-widget .d-row {
                 display: flex;
                 gap: 14px;
                 margin-bottom: 18px;
@@ -914,7 +923,7 @@ class TS_TOF_Shortcode
                 align-items: flex-start;
             }
 
-            .ts-tyre-outlet-widget .d-ico {
+            .sc-outlet-widget .d-ico {
                 color: var(--gold);
                 font-size: 13px;
                 margin-top: 1px;
@@ -922,7 +931,7 @@ class TS_TOF_Shortcode
                 text-align: center;
             }
 
-            .ts-tyre-outlet-widget .d-lbl {
+            .sc-outlet-widget .d-lbl {
                 font-size: 9px;
                 letter-spacing: 3px;
                 text-transform: uppercase;
@@ -930,7 +939,7 @@ class TS_TOF_Shortcode
                 margin-bottom: 3px;
             }
 
-            .ts-tyre-outlet-widget .d-val {
+            .sc-outlet-widget .d-val {
                 font-size: 12px;
                 font-family: 'JetBrains Mono', monospace;
                 color: var(--white);
@@ -939,7 +948,7 @@ class TS_TOF_Shortcode
                 white-space: pre-line;
             }
 
-            .ts-tyre-outlet-widget .d-acts {
+            .sc-outlet-widget .d-acts {
                 margin-top: auto;
                 position: relative;
                 z-index: 1;
@@ -948,13 +957,13 @@ class TS_TOF_Shortcode
                 gap: 8px;
             }
 
-            .ts-tyre-outlet-widget .btn-p {
+            .sc-outlet-widget .btn-p {
                 width: 100%;
                 padding: 15px;
                 background: var(--gold);
                 color: var(--black);
                 border: none;
-                font-family: 'Anton', sans-serif;
+                font-family: var(--font-primary);
                 font-size: 15px;
                 letter-spacing: 3px;
                 text-transform: uppercase;
@@ -963,22 +972,22 @@ class TS_TOF_Shortcode
                 border-radius: 2px;
             }
 
-            .ts-tyre-outlet-widget .btn-p:hover {
+            .sc-outlet-widget .btn-p:hover {
                 background: color-mix(in srgb, var(--gold) 85%, white);
                 transform: translateY(-1px);
             }
 
-            .ts-tyre-outlet-widget .btn-p:active {
+            .sc-outlet-widget .btn-p:active {
                 transform: translateY(0);
             }
 
-            .ts-tyre-outlet-widget .btn-s {
+            .sc-outlet-widget .btn-s {
                 width: 100%;
                 padding: 13px;
                 background: transparent;
                 color: var(--muted2);
                 border: 1px solid var(--border2);
-                font-family: 'Barlow Condensed', sans-serif;
+                font-family: var(--font-body);
                 font-size: 12px;
                 font-weight: 600;
                 letter-spacing: 3px;
@@ -988,39 +997,39 @@ class TS_TOF_Shortcode
                 border-radius: 2px;
             }
 
-            .ts-tyre-outlet-widget .btn-s:hover {
+            .sc-outlet-widget .btn-s:hover {
                 border-color: color-mix(in srgb, var(--gold) 40%, transparent);
                 color: var(--gold);
             }
 
-            .ts-tyre-outlet-widget #map-wrap {
+            .sc-outlet-widget #map-wrap {
                 flex: 1;
                 position: relative;
             }
 
-            .ts-tyre-outlet-widget #map {
+            .sc-outlet-widget #map {
                 width: 100%;
                 height: 100%;
             }
 
-            .ts-tyre-outlet-widget .leaflet-container {
+            .sc-outlet-widget .leaflet-container {
                 background: #0a0a0a !important;
             }
 
-            .ts-tyre-outlet-widget .leaflet-control-attribution {
+            .sc-outlet-widget .leaflet-control-attribution {
                 background: rgba(0,0,0,.4) !important;
                 color: #333 !important;
                 font-size: 8px !important;
                 padding: 2px 6px !important;
             }
 
-            .ts-tyre-outlet-widget .leaflet-control-zoom {
+            .sc-outlet-widget .leaflet-control-zoom {
                 border: 1px solid rgba(255,255,255,.08) !important;
                 border-radius: 3px !important;
                 overflow: hidden;
             }
 
-            .ts-tyre-outlet-widget .leaflet-control-zoom a {
+            .sc-outlet-widget .leaflet-control-zoom a {
                 background: var(--dark) !important;
                 color: var(--muted) !important;
                 border-bottom-color: rgba(255,255,255,.05) !important;
@@ -1030,12 +1039,12 @@ class TS_TOF_Shortcode
                 font-size: 16px !important;
             }
 
-            .ts-tyre-outlet-widget .leaflet-control-zoom a:hover {
+            .sc-outlet-widget .leaflet-control-zoom a:hover {
                 background: var(--surface) !important;
                 color: var(--gold) !important;
             }
 
-            .ts-tyre-outlet-widget #map-wrap::before {
+            .sc-outlet-widget #map-wrap::before {
                 content: '';
                 position: absolute;
                 left: 0;
@@ -1047,7 +1056,7 @@ class TS_TOF_Shortcode
                 pointer-events: none;
             }
 
-            .ts-tyre-outlet-widget .ts-m {
+            .sc-outlet-widget .sc-m {
                 position: relative;
                 width: 44px;
                 height: 44px;
@@ -1056,16 +1065,16 @@ class TS_TOF_Shortcode
                 justify-content: center;
             }
 
-            .ts-tyre-outlet-widget .ts-ring {
+            .sc-outlet-widget .sc-ring {
                 position: absolute;
                 width: 44px;
                 height: 44px;
                 border-radius: 50%;
                 border: 1.5px solid color-mix(in srgb, var(--gold) 20%, transparent);
-                animation: tsTyreRp 2.4s ease-out infinite;
+                animation: scRp 2.4s ease-out infinite;
             }
 
-            .ts-tyre-outlet-widget .ts-core {
+            .sc-outlet-widget .sc-core {
                 width: 26px;
                 height: 26px;
                 background: var(--dark);
@@ -1074,7 +1083,7 @@ class TS_TOF_Shortcode
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-family: 'Anton', sans-serif;
+                font-family: var(--font-primary);
                 font-size: 9px;
                 color: var(--gold);
                 letter-spacing: .5px;
@@ -1083,7 +1092,7 @@ class TS_TOF_Shortcode
                 transition: all .35s cubic-bezier(.16,1,.3,1);
             }
 
-            .ts-tyre-outlet-widget .ts-m.act .ts-core {
+            .sc-outlet-widget .sc-m.act .sc-core {
                 background: var(--gold);
                 color: var(--black);
                 width: 34px;
@@ -1093,12 +1102,12 @@ class TS_TOF_Shortcode
                             0 0 20px color-mix(in srgb, var(--gold) 30%, transparent);
             }
 
-            .ts-tyre-outlet-widget .ts-m.act .ts-ring {
-                animation: tsTyreRpa 1s ease-out infinite;
+            .sc-outlet-widget .sc-m.act .sc-ring {
+                animation: scRpa 1s ease-out infinite;
                 border-color: color-mix(in srgb, var(--gold) 50%, transparent);
             }
 
-            .ts-tyre-outlet-widget .ts-tip {
+            .sc-outlet-widget .sc-tip {
                 position: absolute;
                 top: -30px;
                 background: var(--surface2);
@@ -1118,10 +1127,10 @@ class TS_TOF_Shortcode
                 z-index: 10;
                 overflow: hidden;
             }
-            .ts-tyre-outlet-widget .ts-tip-txt {
+            .sc-outlet-widget .sc-tip-txt {
                 padding: 4px 10px;
             }
-            .ts-tyre-outlet-widget .ts-tip-img {
+            .sc-outlet-widget .sc-tip-img {
                 width: 100%;
                 height: 60px;
                 background-size: cover;
@@ -1129,10 +1138,10 @@ class TS_TOF_Shortcode
                 border-bottom: 1px solid rgba(255,255,255,0.1);
                 display: none;
             }
-            .ts-tyre-outlet-widget .ts-tip.has-img .ts-tip-img {
+            .sc-outlet-widget .sc-tip.has-img .sc-tip-img {
                 display: block;
             }
-            .ts-tyre-outlet-widget .oi-bg-img {
+            .sc-outlet-widget .oi-bg-img {
                 position: absolute;
                 inset: 0;
                 background-size: cover;
@@ -1141,29 +1150,29 @@ class TS_TOF_Shortcode
                 transition: opacity 0.3s;
                 z-index: -1;
             }
-            .ts-tyre-outlet-widget .oi:hover .oi-bg-img,
-            .ts-tyre-outlet-widget .oi.act .oi-bg-img {
+            .sc-outlet-widget .oi:hover .oi-bg-img,
+            .sc-outlet-widget .oi.act .oi-bg-img {
                 opacity: 0.15;
             }
 
-            .ts-tyre-outlet-widget .ts-m:hover .ts-tip {
+            .sc-outlet-widget .sc-m:hover .sc-tip {
                 opacity: 1;
                 transform: translateY(0);
             }
 
-            @keyframes tsTyreRp {
+            @keyframes scRp {
                 0%   { transform: scale(.8); opacity: .4; }
                 70%  { transform: scale(1.5); opacity: 0; }
                 100% { transform: scale(1.5); opacity: 0; }
             }
 
-            @keyframes tsTyreRpa {
+            @keyframes scRpa {
                 0%   { transform: scale(.85); opacity: .7; }
                 70%  { transform: scale(2); opacity: 0; }
                 100% { transform: scale(2); opacity: 0; }
             }
 
-            .ts-tyre-outlet-widget #hud {
+            .sc-outlet-widget #hud {
                 position: absolute;
                 bottom: 24px;
                 right: 24px;
@@ -1177,14 +1186,14 @@ class TS_TOF_Shortcode
                 min-width: 130px;
             }
 
-            .ts-tyre-outlet-widget .hud-big {
-                font-family: 'Anton', sans-serif;
+            .sc-outlet-widget .hud-big {
+                font-family: var(--font-primary);
                 font-size: 28px;
                 color: var(--gold);
                 line-height: 1;
             }
 
-            .ts-tyre-outlet-widget .hud-sm {
+            .sc-outlet-widget .hud-sm {
                 font-size: 9px;
                 letter-spacing: 4px;
                 text-transform: uppercase;
@@ -1192,20 +1201,20 @@ class TS_TOF_Shortcode
                 margin-top: 2px;
             }
 
-            .ts-tyre-outlet-widget .hud-div {
+            .sc-outlet-widget .hud-div {
                 height: 1px;
                 background: var(--border);
                 margin: 10px 0;
             }
 
-            .ts-tyre-outlet-widget .hud-tag {
+            .sc-outlet-widget .hud-tag {
                 font-size: 10px;
                 letter-spacing: 3px;
                 text-transform: uppercase;
                 color: var(--muted2);
             }
 
-            .ts-tyre-outlet-widget #topbar {
+            .sc-outlet-widget #topbar {
                 position: absolute;
                 top: 0;
                 left: 0;
@@ -1219,7 +1228,7 @@ class TS_TOF_Shortcode
                 justify-content: flex-end;
             }
 
-            .ts-tyre-outlet-widget .tb-badge {
+            .sc-outlet-widget .tb-badge {
                 background: rgba(10,10,10,.8);
                 border: 1px solid var(--border);
                 padding: 6px 14px;
@@ -1231,7 +1240,7 @@ class TS_TOF_Shortcode
                 backdrop-filter: blur(8px);
             }
 
-            .ts-tyre-outlet-widget #ldr {
+            .sc-outlet-widget #ldr {
                 position: absolute;
                 inset: 0;
                 background: var(--black);
@@ -1243,25 +1252,25 @@ class TS_TOF_Shortcode
                 transition: opacity .7s, visibility .7s;
             }
 
-            .ts-tyre-outlet-widget #ldr.gone {
+            .sc-outlet-widget #ldr.gone {
                 opacity: 0;
                 visibility: hidden;
             }
 
-            .ts-tyre-outlet-widget .ldr-brand {
-                font-family: 'Anton', sans-serif;
+            .sc-outlet-widget .ldr-brand {
+                font-family: var(--font-primary);
                 font-size: 52px;
                 letter-spacing: 6px;
                 color: var(--white);
                 margin-bottom: 4px;
             }
 
-            .ts-tyre-outlet-widget .ldr-brand em {
+            .sc-outlet-widget .ldr-brand em {
                 color: var(--gold);
                 font-style: normal;
             }
 
-            .ts-tyre-outlet-widget .ldr-sub {
+            .sc-outlet-widget .ldr-sub {
                 font-size: 9px;
                 letter-spacing: 7px;
                 text-transform: uppercase;
@@ -1269,20 +1278,20 @@ class TS_TOF_Shortcode
                 margin-bottom: 52px;
             }
 
-            .ts-tyre-outlet-widget .ldr-ring {
+            .sc-outlet-widget .ldr-ring {
                 width: 52px;
                 height: 52px;
                 border-radius: 50%;
                 border: 2px solid var(--surface);
                 border-top-color: var(--gold);
-                animation: tsTyreSpin .7s linear infinite;
+                animation: scSpin .7s linear infinite;
             }
 
-            @keyframes tsTyreSpin {
+            @keyframes scSpin {
                 to { transform: rotate(360deg); }
             }
 
-            .ts-tyre-outlet-widget .leaflet-popup-content-wrapper {
+            .sc-outlet-widget .leaflet-popup-content-wrapper {
                 background: var(--dark) !important;
                 border: 1px solid var(--border2) !important;
                 border-radius: 3px !important;
@@ -1290,41 +1299,41 @@ class TS_TOF_Shortcode
                 color: var(--white) !important;
             }
 
-            .ts-tyre-outlet-widget .leaflet-popup-content {
+            .sc-outlet-widget .leaflet-popup-content {
                 color: var(--white) !important;
-                font-family: 'Barlow Condensed', sans-serif !important;
+                font-family: var(--font-body) !important;
                 font-size: 12px !important;
                 letter-spacing: 1px !important;
                 margin: 8px 14px !important;
                 text-transform: uppercase;
             }
 
-            .ts-tyre-outlet-widget .leaflet-popup-tip-container .leaflet-popup-tip {
+            .sc-outlet-widget .leaflet-popup-tip-container .leaflet-popup-tip {
                 background: var(--dark) !important;
             }
 
-            .ts-tyre-outlet-widget .leaflet-popup-close-button {
+            .sc-outlet-widget .leaflet-popup-close-button {
                 color: var(--muted) !important;
                 font-size: 18px !important;
                 top: 4px !important;
                 right: 6px !important;
             }
 
-            .ts-tyre-outlet-widget .leaflet-popup-close-button:hover {
+            .sc-outlet-widget .leaflet-popup-close-button:hover {
                 color: var(--gold) !important;
             }
 
             @media (max-width: 767px) {
-                .ts-tyre-outlet-widget {
+                .sc-outlet-widget {
                     height: 850px;
                     min-height: 850px;
                 }
 
-                .ts-tyre-outlet-widget #app {
+                .sc-outlet-widget #app {
                     flex-direction: column;
                 }
 
-                .ts-tyre-outlet-widget #sb {
+                .sc-outlet-widget #sb {
                     width: 100%;
                     height: 45%;
                     min-height: 380px;
@@ -1332,39 +1341,39 @@ class TS_TOF_Shortcode
                     border-bottom: 1px solid var(--border);
                 }
 
-                .ts-tyre-outlet-widget #map-wrap {
+                .sc-outlet-widget #map-wrap {
                     height: 55%;
                 }
 
-                .ts-tyre-outlet-widget #hdr {
+                .sc-outlet-widget #hdr {
                     padding: 22px 22px 16px;
                 }
 
-                .ts-tyre-outlet-widget #srch-wrap {
+                .sc-outlet-widget #srch-wrap {
                     padding: 12px 22px;
                 }
 
-                .ts-tyre-outlet-widget .oi {
+                .sc-outlet-widget .oi {
                     padding: 12px 22px;
                 }
 
-                .ts-tyre-outlet-widget #ftr {
+                .sc-outlet-widget #ftr {
                     padding: 12px 22px;
                 }
 
-                .ts-tyre-outlet-widget #hud { display: none; }
-                .ts-tyre-outlet-widget #topbar { display: none; }
-                .ts-tyre-outlet-widget #map-wrap::before { display: none; }
+                .sc-outlet-widget #hud { display: none; }
+                .sc-outlet-widget #topbar { display: none; }
+                .sc-outlet-widget #map-wrap::before { display: none; }
 
-                .ts-tyre-outlet-widget #det {
+                .sc-outlet-widget #det {
                     padding: 24px;
                 }
 
-                .ts-tyre-outlet-widget .d-title {
+                .sc-outlet-widget .d-title {
                     font-size: 28px;
                 }
 
-                .ts-tyre-outlet-widget .d-bignum {
+                .sc-outlet-widget .d-bignum {
                     font-size: 80px;
                 }
             }
@@ -1375,7 +1384,7 @@ class TS_TOF_Shortcode
     private function get_outlets()
     {
         $posts = get_posts([
-            'post_type'      => 'ts_outlet',
+            'post_type'      => 'sc_outlet',
             'post_status'    => 'publish',
             'posts_per_page' => -1,
             'orderby'        => 'menu_order',
@@ -1386,8 +1395,8 @@ class TS_TOF_Shortcode
         $i = 1;
 
         foreach ($posts as $post) {
-            $lat = get_post_meta($post->ID, '_ts_outlet_lat', true);
-            $lng = get_post_meta($post->ID, '_ts_outlet_lng', true);
+            $lat = get_post_meta($post->ID, '_sc_outlet_lat', true);
+            $lng = get_post_meta($post->ID, '_sc_outlet_lng', true);
 
             if (empty($lat) || empty($lng)) {
                 continue;
@@ -1401,13 +1410,13 @@ class TS_TOF_Shortcode
             $outlets[] = [
                 'id'    => $i,
                 'name'  => $post->post_title,
-                'area'  => get_post_meta($post->ID, '_ts_outlet_area', true),
-                'addr'  => get_post_meta($post->ID, '_ts_outlet_address', true),
-                'phone' => get_post_meta($post->ID, '_ts_outlet_phone', true),
-                'hrs'   => get_post_meta($post->ID, '_ts_outlet_hours', true),
+                'area'  => get_post_meta($post->ID, '_sc_outlet_area', true),
+                'addr'  => get_post_meta($post->ID, '_sc_outlet_address', true),
+                'phone' => get_post_meta($post->ID, '_sc_outlet_phone', true),
+                'hrs'   => get_post_meta($post->ID, '_sc_outlet_hours', true),
                 'lat'   => (float) $lat,
                 'lng'   => (float) $lng,
-                'maps'  => get_post_meta($post->ID, '_ts_outlet_maps_url', true),
+                'maps'  => get_post_meta($post->ID, '_sc_outlet_maps_url', true),
                 'img'   => $img,
             ];
 

@@ -4,21 +4,49 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class TS_TOF_Settings
+class SC_OF_Settings
 {
-    private $option_group = 'ts_tof_settings';
-    private $option_name = 'ts_tof_options';
+    private $option_group = 'sc_of_settings';
+    private $option_name = 'sc_of_options';
 
     public function __construct()
     {
-        add_action('admin_menu', [$this, 'add_menu_page']);
+        add_action('admin_menu', [$this, 'ensure_supercraft_menu'], 9);
+        add_action('admin_menu', [$this, 'add_menu_page'], 10);
         add_action('admin_init', [$this, 'register_settings']);
         add_action('admin_enqueue_scripts', [$this, 'enqueue_admin']);
     }
 
+    public function ensure_supercraft_menu()
+    {
+        global $menu;
+        $has_supercraft = false;
+        if (is_array($menu)) {
+            foreach ($menu as $item) {
+                if (isset($item[2]) && $item[2] === 'supercraft') {
+                    $has_supercraft = true;
+                    break;
+                }
+            }
+        }
+        if (!$has_supercraft) {
+            add_menu_page(
+                __('Supercraft', 'supercraft-of'),
+                __('Supercraft', 'supercraft-of'),
+                'manage_options',
+                'supercraft',
+                function () {
+                    echo '<div class="wrap"><h1>' . esc_html__('Supercraft Dashboard', 'supercraft-of') . '</h1><p>' . esc_html__('Welcome to Supercraft tools.', 'supercraft-of') . '</p></div>';
+                },
+                'dashicons-admin-generic',
+                30
+            );
+        }
+    }
+
     public function enqueue_admin($hook)
     {
-        if ('settings_page_ts-tyre-outlets' !== $hook) {
+        if (strpos($hook, 'supercraft-outlet-finder') === false) {
             return;
         }
         wp_enqueue_style('wp-color-picker');
@@ -28,7 +56,7 @@ class TS_TOF_Settings
             ?>
             <script>
             jQuery(function ($) {
-                $('.ts-tof-color-picker').wpColorPicker();
+                $('.sc-of-color-picker').wpColorPicker();
             });
             </script>
             <?php
@@ -37,11 +65,12 @@ class TS_TOF_Settings
 
     public function add_menu_page()
     {
-        add_options_page(
-            __('TS Tyre Outlet Finder', 'ts-tof'),
-            __('TS Tyre Outlets', 'ts-tof'),
+        add_submenu_page(
+            'supercraft',
+            __('Supercraft Outlet Finder Settings', 'supercraft-of'),
+            __('Outlet Finder Settings', 'supercraft-of'),
             'manage_options',
-            'ts-tyre-outlets',
+            'supercraft-outlet-finder',
             [$this, 'render_page']
         );
     }
@@ -51,102 +80,102 @@ class TS_TOF_Settings
         register_setting($this->option_group, $this->option_name, [$this, 'sanitize']);
 
         add_settings_section(
-            'ts_tof_general',
-            __('General Settings', 'ts-tof'),
+            'sc_of_general',
+            __('General Settings', 'supercraft-of'),
             null,
-            'ts-tyre-outlets'
+            'supercraft-outlet-finder'
         );
 
         add_settings_field(
             'brand_name',
-            __('Brand Name', 'ts-tof'),
+            __('Brand Name', 'supercraft-of'),
             [$this, 'field_text'],
-            'ts-tyre-outlets',
-            'ts_tof_general',
-            ['key' => 'brand_name', 'default' => 'TS TYRE']
+            'supercraft-outlet-finder',
+            'sc_of_general',
+            ['key' => 'brand_name', 'default' => 'SUPERCRAFT']
         );
 
         add_settings_field(
             'brand_subtitle',
-            __('Brand Subtitle', 'ts-tof'),
+            __('Brand Subtitle', 'supercraft-of'),
             [$this, 'field_text'],
-            'ts-tyre-outlets',
-            'ts_tof_general',
-            ['key' => 'brand_subtitle', 'default' => 'Premium Tyre Solutions']
+            'supercraft-outlet-finder',
+            'sc_of_general',
+            ['key' => 'brand_subtitle', 'default' => 'Premium Outlet Finder']
         );
 
         add_settings_field(
             'region',
-            __('Region Label', 'ts-tof'),
+            __('Region Label', 'supercraft-of'),
             [$this, 'field_text'],
-            'ts-tyre-outlets',
-            'ts_tof_general',
+            'supercraft-outlet-finder',
+            'sc_of_general',
             ['key' => 'region', 'default' => 'Klang Valley']
         );
 
         add_settings_field(
             'region_sub',
-            __('Region Subtitle', 'ts-tof'),
+            __('Region Subtitle', 'supercraft-of'),
             [$this, 'field_text'],
-            'ts-tyre-outlets',
-            'ts_tof_general',
+            'supercraft-outlet-finder',
+            'sc_of_general',
             ['key' => 'region_sub', 'default' => 'Klang Valley · Malaysia']
         );
 
         add_settings_field(
             'map_center_lat',
-            __('Map Center Latitude', 'ts-tof'),
+            __('Map Center Latitude', 'supercraft-of'),
             [$this, 'field_text'],
-            'ts-tyre-outlets',
-            'ts_tof_general',
+            'supercraft-outlet-finder',
+            'sc_of_general',
             ['key' => 'map_center_lat', 'default' => '3.1']
         );
 
         add_settings_field(
             'map_center_lng',
-            __('Map Center Longitude', 'ts-tof'),
+            __('Map Center Longitude', 'supercraft-of'),
             [$this, 'field_text'],
-            'ts-tyre-outlets',
-            'ts_tof_general',
+            'supercraft-outlet-finder',
+            'sc_of_general',
             ['key' => 'map_center_lng', 'default' => '101.62']
         );
 
         add_settings_field(
             'map_zoom',
-            __('Default Map Zoom', 'ts-tof'),
+            __('Default Map Zoom', 'supercraft-of'),
             [$this, 'field_number'],
-            'ts-tyre-outlets',
-            'ts_tof_general',
+            'supercraft-outlet-finder',
+            'sc_of_general',
             ['key' => 'map_zoom', 'default' => '11', 'min' => 1, 'max' => 20]
         );
 
         add_settings_field(
             'fly_zoom',
-            __('Fly-to Zoom Level', 'ts-tof'),
+            __('Fly-to Zoom Level', 'supercraft-of'),
             [$this, 'field_number'],
-            'ts-tyre-outlets',
-            'ts_tof_general',
+            'supercraft-outlet-finder',
+            'sc_of_general',
             ['key' => 'fly_zoom', 'default' => '15', 'min' => 1, 'max' => 20]
         );
 
         add_settings_section(
-            'ts_tof_styling',
-            __('Styling', 'ts-tof'),
+            'sc_of_styling',
+            __('Styling', 'supercraft-of'),
             null,
-            'ts-tyre-outlets'
+            'supercraft-outlet-finder'
         );
 
         $colors = [
-            'color_primary'   => ['label' => __('Primary Accent', 'ts-tof'), 'default' => '#F2C94C'],
-            'color_bg'        => ['label' => __('Background', 'ts-tof'), 'default' => '#070707'],
-            'color_surface'   => ['label' => __('Surface / Card', 'ts-tof'), 'default' => '#181818'],
-            'color_surface2'  => ['label' => __('Surface Light', 'ts-tof'), 'default' => '#202020'],
-            'color_text'      => ['label' => __('Text', 'ts-tof'), 'default' => '#EDEAE4'],
-            'color_muted'     => ['label' => __('Muted Text', 'ts-tof'), 'default' => '#555555'],
-            'color_muted2'    => ['label' => __('Muted Text Light', 'ts-tof'), 'default' => '#777777'],
-            'color_border'    => ['label' => __('Border', 'ts-tof'), 'default' => 'rgba(255,255,255,0.06)'],
-            'color_border2'   => ['label' => __('Border Light', 'ts-tof'), 'default' => 'rgba(255,255,255,0.11)'],
-            'color_dark'      => ['label' => __('Sidebar Background', 'ts-tof'), 'default' => '#101010'],
+            'color_primary'   => ['label' => __('Primary Accent', 'supercraft-of'), 'default' => '#F2C94C'],
+            'color_bg'        => ['label' => __('Background', 'supercraft-of'), 'default' => '#070707'],
+            'color_surface'   => ['label' => __('Surface / Card', 'supercraft-of'), 'default' => '#181818'],
+            'color_surface2'  => ['label' => __('Surface Light', 'supercraft-of'), 'default' => '#202020'],
+            'color_text'      => ['label' => __('Text', 'supercraft-of'), 'default' => '#EDEAE4'],
+            'color_muted'     => ['label' => __('Muted Text', 'supercraft-of'), 'default' => '#555555'],
+            'color_muted2'    => ['label' => __('Muted Text Light', 'supercraft-of'), 'default' => '#777777'],
+            'color_border'    => ['label' => __('Border', 'supercraft-of'), 'default' => 'rgba(255,255,255,0.06)'],
+            'color_border2'   => ['label' => __('Border Light', 'supercraft-of'), 'default' => 'rgba(255,255,255,0.11)'],
+            'color_dark'      => ['label' => __('Sidebar Background', 'supercraft-of'), 'default' => '#101010'],
         ];
 
         foreach ($colors as $key => $cfg) {
@@ -154,8 +183,8 @@ class TS_TOF_Settings
                 $key,
                 $cfg['label'],
                 [$this, 'field_color'],
-                'ts-tyre-outlets',
-                'ts_tof_styling',
+                'supercraft-outlet-finder',
+                'sc_of_styling',
                 ['key' => $key, 'default' => $cfg['default']]
             );
         }
@@ -180,8 +209,8 @@ class TS_TOF_Settings
     private function defaults()
     {
         return [
-            'brand_name'      => 'TS TYRE',
-            'brand_subtitle'  => 'Premium Tyre Solutions',
+            'brand_name'      => 'SUPERCRAFT',
+            'brand_subtitle'  => 'Premium Outlet Finder',
             'region'          => 'Klang Valley',
             'region_sub'      => 'Klang Valley · Malaysia',
             'map_center_lat'  => '3.1',
@@ -205,7 +234,7 @@ class TS_TOF_Settings
     {
         $instance = new self();
         $defaults = $instance->defaults();
-        $options = get_option('ts_tof_options', []);
+        $options = get_option('sc_of_options', []);
         return isset($options[$key]) ? $options[$key] : $defaults[$key];
     }
 
@@ -213,11 +242,11 @@ class TS_TOF_Settings
     {
         ?>
         <div class="wrap">
-            <h1><?php esc_html_e('TS Tyre Outlet Finder Settings', 'ts-tof'); ?></h1>
+            <h1><?php esc_html_e('Supercraft Outlet Finder Settings', 'supercraft-of'); ?></h1>
             <form method="post" action="options.php">
                 <?php
                 settings_fields($this->option_group);
-                do_settings_sections('ts-tyre-outlets');
+                do_settings_sections('supercraft-outlet-finder');
                 submit_button();
                 ?>
             </form>
@@ -229,7 +258,7 @@ class TS_TOF_Settings
     {
         $value = self::get($args['key']);
         ?>
-        <input type="text" name="ts_tof_options[<?php echo esc_attr($args['key']); ?>]"
+        <input type="text" name="sc_of_options[<?php echo esc_attr($args['key']); ?>]"
                value="<?php echo esc_attr($value); ?>" class="regular-text">
         <?php
     }
@@ -238,7 +267,7 @@ class TS_TOF_Settings
     {
         $value = self::get($args['key']);
         ?>
-        <input type="number" name="ts_tof_options[<?php echo esc_attr($args['key']); ?>]"
+        <input type="number" name="sc_of_options[<?php echo esc_attr($args['key']); ?>]"
                value="<?php echo esc_attr($value); ?>"
                min="<?php echo esc_attr($args['min'] ?? ''); ?>"
                max="<?php echo esc_attr($args['max'] ?? ''); ?>"
@@ -250,9 +279,9 @@ class TS_TOF_Settings
     {
         $value = self::get($args['key']);
         ?>
-        <input type="text" name="ts_tof_options[<?php echo esc_attr($args['key']); ?>]"
+        <input type="text" name="sc_of_options[<?php echo esc_attr($args['key']); ?>]"
                value="<?php echo esc_attr($value); ?>"
-               class="ts-tof-color-picker" data-default-color="<?php echo esc_attr($args['default']); ?>">
+               class="sc-of-color-picker" data-default-color="<?php echo esc_attr($args['default']); ?>">
         <?php
     }
 }

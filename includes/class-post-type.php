@@ -4,41 +4,69 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class TS_TOF_Post_Type
+class SC_OF_Post_Type
 {
     public function __construct()
     {
         add_action('init', [$this, 'register']);
         add_action('add_meta_boxes', [$this, 'add_meta_boxes']);
-        add_action('save_post_ts_outlet', [$this, 'save_meta'], 10, 2);
-        add_filter('manage_ts_outlet_posts_columns', [$this, 'columns']);
-        add_action('manage_ts_outlet_posts_custom_column', [$this, 'column_data'], 10, 2);
-        add_filter('manage_edit-ts_outlet_sortable_columns', [$this, 'sortable_columns']);
+        add_action('save_post_sc_outlet', [$this, 'save_meta'], 10, 2);
+        add_filter('manage_sc_outlet_posts_columns', [$this, 'columns']);
+        add_action('manage_sc_outlet_posts_custom_column', [$this, 'column_data'], 10, 2);
+        add_filter('manage_edit-sc_outlet_sortable_columns', [$this, 'sortable_columns']);
         add_action('pre_get_posts', [$this, 'sort_backend_outlets']);
+        add_action('admin_menu', [$this, 'ensure_supercraft_menu'], 9);
+    }
+
+    public function ensure_supercraft_menu()
+    {
+        global $menu;
+        $has_supercraft = false;
+        if (is_array($menu)) {
+            foreach ($menu as $item) {
+                if (isset($item[2]) && $item[2] === 'supercraft') {
+                    $has_supercraft = true;
+                    break;
+                }
+            }
+        }
+        if (!$has_supercraft) {
+            add_menu_page(
+                __('Supercraft', 'supercraft-of'),
+                __('Supercraft', 'supercraft-of'),
+                'manage_options',
+                'supercraft',
+                function () {
+                    echo '<div class="wrap"><h1>' . esc_html__('Supercraft Dashboard', 'supercraft-of') . '</h1><p>' . esc_html__('Welcome to Supercraft tools.', 'supercraft-of') . '</p></div>';
+                },
+                'dashicons-admin-generic',
+                30
+            );
+        }
     }
 
     public function register()
     {
         $labels = [
-            'name'               => __('Outlets', 'ts-tof'),
-            'singular_name'      => __('Outlet', 'ts-tof'),
-            'add_new'            => __('Add New', 'ts-tof'),
-            'add_new_item'       => __('Add New Outlet', 'ts-tof'),
-            'edit_item'          => __('Edit Outlet', 'ts-tof'),
-            'new_item'           => __('New Outlet', 'ts-tof'),
-            'view_item'          => __('View Outlet', 'ts-tof'),
-            'search_items'       => __('Search Outlets', 'ts-tof'),
-            'not_found'          => __('No outlets found', 'ts-tof'),
-            'not_found_in_trash' => __('No outlets found in Trash', 'ts-tof'),
-            'all_items'          => __('All Outlets', 'ts-tof'),
-            'menu_name'          => __('TS Outlets', 'ts-tof'),
+            'name'               => __('Outlets', 'supercraft-of'),
+            'singular_name'      => __('Outlet', 'supercraft-of'),
+            'add_new'            => __('Add New', 'supercraft-of'),
+            'add_new_item'       => __('Add New Outlet', 'supercraft-of'),
+            'edit_item'          => __('Edit Outlet', 'supercraft-of'),
+            'new_item'           => __('New Outlet', 'supercraft-of'),
+            'view_item'          => __('View Outlet', 'supercraft-of'),
+            'search_items'       => __('Search Outlets', 'supercraft-of'),
+            'not_found'          => __('No outlets found', 'supercraft-of'),
+            'not_found_in_trash' => __('No outlets found in Trash', 'supercraft-of'),
+            'all_items'          => __('All Outlets', 'supercraft-of'),
+            'menu_name'          => __('Outlets', 'supercraft-of'),
         ];
 
-        register_post_type('ts_outlet', [
+        register_post_type('sc_outlet', [
             'labels'       => $labels,
             'public'       => false,
             'show_ui'      => true,
-            'show_in_menu' => true,
+            'show_in_menu' => 'supercraft',
             'menu_icon'    => 'dashicons-location',
             'supports'     => ['title', 'thumbnail', 'page-attributes'],
             'rewrite'      => false,
@@ -50,10 +78,10 @@ class TS_TOF_Post_Type
     public function add_meta_boxes()
     {
         add_meta_box(
-            'ts_outlet_details',
-            __('Outlet Details', 'ts-tof'),
+            'sc_outlet_details',
+            __('Outlet Details', 'supercraft-of'),
             [$this, 'render_meta_box'],
-            'ts_outlet',
+            'sc_outlet',
             'normal',
             'high'
         );
@@ -61,16 +89,16 @@ class TS_TOF_Post_Type
 
     public function render_meta_box($post)
     {
-        wp_nonce_field('ts_outlet_save', 'ts_outlet_nonce');
+        wp_nonce_field('sc_outlet_save', 'sc_outlet_nonce');
 
         $fields = [
-            '_ts_outlet_area' => __('Area', 'ts-tof'),
-            '_ts_outlet_address' => __('Address', 'ts-tof'),
-            '_ts_outlet_phone' => __('Phone', 'ts-tof'),
-            '_ts_outlet_hours' => __('Operating Hours', 'ts-tof'),
-            '_ts_outlet_lat' => __('Latitude', 'ts-tof'),
-            '_ts_outlet_lng' => __('Longitude', 'ts-tof'),
-            '_ts_outlet_maps_url' => __('Google Maps URL', 'ts-tof'),
+            '_sc_outlet_area' => __('Area', 'supercraft-of'),
+            '_sc_outlet_address' => __('Address', 'supercraft-of'),
+            '_sc_outlet_phone' => __('Phone', 'supercraft-of'),
+            '_sc_outlet_hours' => __('Operating Hours', 'supercraft-of'),
+            '_sc_outlet_lat' => __('Latitude', 'supercraft-of'),
+            '_sc_outlet_lng' => __('Longitude', 'supercraft-of'),
+            '_sc_outlet_maps_url' => __('Google Maps URL', 'supercraft-of'),
         ];
 
         $values = [];
@@ -80,78 +108,78 @@ class TS_TOF_Post_Type
 
         ?>
         <style>
-            .ts-tof-field {
+            .sc-of-field {
                 margin-bottom: 14px;
             }
-            .ts-tof-field label {
+            .sc-of-field label {
                 display: block;
                 font-weight: 600;
                 margin-bottom: 4px;
             }
-            .ts-tof-field input,
-            .ts-tof-field textarea {
+            .sc-of-field input,
+            .sc-of-field textarea {
                 width: 100%;
                 max-width: 500px;
             }
-            .ts-tof-field textarea {
+            .sc-of-field textarea {
                 min-height: 70px;
             }
-            .ts-tof-row {
+            .sc-of-row {
                 display: flex;
                 gap: 14px;
             }
-            .ts-tof-row .ts-tof-field {
+            .sc-of-row .sc-of-field {
                 flex: 1;
             }
         </style>
 
-        <div class="ts-tof-field">
-            <label for="_ts_outlet_area"><?php esc_html_e('Area', 'ts-tof'); ?></label>
-            <input type="text" id="_ts_outlet_area" name="_ts_outlet_area"
-                   value="<?php echo esc_attr($values['_ts_outlet_area']); ?>">
+        <div class="sc-of-field">
+            <label for="_sc_outlet_area"><?php esc_html_e('Area', 'supercraft-of'); ?></label>
+            <input type="text" id="_sc_outlet_area" name="_sc_outlet_area"
+                   value="<?php echo esc_attr($values['_sc_outlet_area']); ?>">
         </div>
 
-        <div class="ts-tof-field">
-            <label for="_ts_outlet_address"><?php esc_html_e('Address', 'ts-tof'); ?></label>
-            <textarea id="_ts_outlet_address" name="_ts_outlet_address"><?php echo esc_textarea($values['_ts_outlet_address']); ?></textarea>
+        <div class="sc-of-field">
+            <label for="_sc_outlet_address"><?php esc_html_e('Address', 'supercraft-of'); ?></label>
+            <textarea id="_sc_outlet_address" name="_sc_outlet_address"><?php echo esc_textarea($values['_sc_outlet_address']); ?></textarea>
         </div>
 
-        <div class="ts-tof-field">
-            <label for="_ts_outlet_phone"><?php esc_html_e('Phone', 'ts-tof'); ?></label>
-            <input type="text" id="_ts_outlet_phone" name="_ts_outlet_phone"
-                   value="<?php echo esc_attr($values['_ts_outlet_phone']); ?>">
+        <div class="sc-of-field">
+            <label for="_sc_outlet_phone"><?php esc_html_e('Phone', 'supercraft-of'); ?></label>
+            <input type="text" id="_sc_outlet_phone" name="_sc_outlet_phone"
+                   value="<?php echo esc_attr($values['_sc_outlet_phone']); ?>">
         </div>
 
-        <div class="ts-tof-field">
-            <label for="_ts_outlet_hours"><?php esc_html_e('Operating Hours', 'ts-tof'); ?></label>
-            <textarea id="_ts_outlet_hours" name="_ts_outlet_hours"><?php echo esc_textarea($values['_ts_outlet_hours']); ?></textarea>
+        <div class="sc-of-field">
+            <label for="_sc_outlet_hours"><?php esc_html_e('Operating Hours', 'supercraft-of'); ?></label>
+            <textarea id="_sc_outlet_hours" name="_sc_outlet_hours"><?php echo esc_textarea($values['_sc_outlet_hours']); ?></textarea>
         </div>
 
-        <div class="ts-tof-row">
-            <div class="ts-tof-field">
-                <label for="_ts_outlet_lat"><?php esc_html_e('Latitude', 'ts-tof'); ?></label>
-                <input type="text" id="_ts_outlet_lat" name="_ts_outlet_lat"
-                       value="<?php echo esc_attr($values['_ts_outlet_lat']); ?>">
+        <div class="sc-of-row">
+            <div class="sc-of-field">
+                <label for="_sc_outlet_lat"><?php esc_html_e('Latitude', 'supercraft-of'); ?></label>
+                <input type="text" id="_sc_outlet_lat" name="_sc_outlet_lat"
+                       value="<?php echo esc_attr($values['_sc_outlet_lat']); ?>">
             </div>
-            <div class="ts-tof-field">
-                <label for="_ts_outlet_lng"><?php esc_html_e('Longitude', 'ts-tof'); ?></label>
-                <input type="text" id="_ts_outlet_lng" name="_ts_outlet_lng"
-                       value="<?php echo esc_attr($values['_ts_outlet_lng']); ?>">
+            <div class="sc-of-field">
+                <label for="_sc_outlet_lng"><?php esc_html_e('Longitude', 'supercraft-of'); ?></label>
+                <input type="text" id="_sc_outlet_lng" name="_sc_outlet_lng"
+                       value="<?php echo esc_attr($values['_sc_outlet_lng']); ?>">
             </div>
         </div>
 
-        <div class="ts-tof-field">
-            <label for="_ts_outlet_maps_url"><?php esc_html_e('Google Maps URL', 'ts-tof'); ?></label>
-            <input type="url" id="_ts_outlet_maps_url" name="_ts_outlet_maps_url"
-                   value="<?php echo esc_attr($values['_ts_outlet_maps_url']); ?>">
+        <div class="sc-of-field">
+            <label for="_sc_outlet_maps_url"><?php esc_html_e('Google Maps URL', 'supercraft-of'); ?></label>
+            <input type="url" id="_sc_outlet_maps_url" name="_sc_outlet_maps_url"
+                   value="<?php echo esc_attr($values['_sc_outlet_maps_url']); ?>">
         </div>
         <?php
     }
 
     public function save_meta($post_id, $post)
     {
-        if (!isset($_POST['ts_outlet_nonce']) ||
-            !wp_verify_nonce($_POST['ts_outlet_nonce'], 'ts_outlet_save')) {
+        if (!isset($_POST['sc_outlet_nonce']) ||
+            !wp_verify_nonce($_POST['sc_outlet_nonce'], 'sc_outlet_save')) {
             return;
         }
 
@@ -164,13 +192,13 @@ class TS_TOF_Post_Type
         }
 
         $fields = [
-            '_ts_outlet_area',
-            '_ts_outlet_address',
-            '_ts_outlet_phone',
-            '_ts_outlet_hours',
-            '_ts_outlet_lat',
-            '_ts_outlet_lng',
-            '_ts_outlet_maps_url',
+            '_sc_outlet_area',
+            '_sc_outlet_address',
+            '_sc_outlet_phone',
+            '_sc_outlet_hours',
+            '_sc_outlet_lat',
+            '_sc_outlet_lng',
+            '_sc_outlet_maps_url',
         ];
 
         foreach ($fields as $key) {
@@ -186,11 +214,11 @@ class TS_TOF_Post_Type
         foreach ($columns as $k => $v) {
             $new[$k] = $v;
             if ('title' === $k) {
-                $new['image'] = __('Image', 'ts-tof');
-                $new['area'] = __('Area', 'ts-tof');
-                $new['phone'] = __('Phone', 'ts-tof');
-                $new['coordinates'] = __('Coordinates', 'ts-tof');
-                $new['menu_order'] = __('Order', 'ts-tof');
+                $new['image'] = __('Image', 'supercraft-of');
+                $new['area'] = __('Area', 'supercraft-of');
+                $new['phone'] = __('Phone', 'supercraft-of');
+                $new['coordinates'] = __('Coordinates', 'supercraft-of');
+                $new['menu_order'] = __('Order', 'supercraft-of');
             }
         }
         return $new;
@@ -205,14 +233,14 @@ class TS_TOF_Post_Type
                 }
                 break;
             case 'area':
-                echo esc_html(get_post_meta($post_id, '_ts_outlet_area', true));
+                echo esc_html(get_post_meta($post_id, '_sc_outlet_area', true));
                 break;
             case 'phone':
-                echo esc_html(get_post_meta($post_id, '_ts_outlet_phone', true));
+                echo esc_html(get_post_meta($post_id, '_sc_outlet_phone', true));
                 break;
             case 'coordinates':
-                $lat = get_post_meta($post_id, '_ts_outlet_lat', true);
-                $lng = get_post_meta($post_id, '_ts_outlet_lng', true);
+                $lat = get_post_meta($post_id, '_sc_outlet_lat', true);
+                $lng = get_post_meta($post_id, '_sc_outlet_lng', true);
                 if ($lat && $lng) {
                     echo esc_html("{$lat}, {$lng}");
                 }
@@ -233,7 +261,7 @@ class TS_TOF_Post_Type
 
     public function sort_backend_outlets($query)
     {
-        if (is_admin() && $query->is_main_query() && $query->get('post_type') === 'ts_outlet') {
+        if (is_admin() && $query->is_main_query() && $query->get('post_type') === 'sc_outlet') {
             $orderby = $query->get('orderby');
             if (!$orderby) {
                 $query->set('orderby', 'menu_order');
@@ -242,3 +270,4 @@ class TS_TOF_Post_Type
         }
     }
 }
+
