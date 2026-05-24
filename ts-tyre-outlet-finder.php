@@ -28,4 +28,16 @@ new TS_TOF_Shortcode();
 
 if (is_admin()) {
     new TS_TOF_Settings();
+
+    require_once TS_TOF_PATH . 'lib/plugin-update-checker.php';
+
+    use YahnisElsts\PluginUpdateChecker\v5p5\PucFactory;
+
+    $updateChecker = PucFactory::buildUpdateChecker(
+        'https://github.com/lynesslim/supercraft-outlet-finder-plugin',
+        TS_TOF_FILE,
+        'ts-tyre-outlet-finder'
+    );
+
+    $updateChecker->getVcsApi()->enableReleaseAssets();
 }
