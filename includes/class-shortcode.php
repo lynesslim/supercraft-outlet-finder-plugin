@@ -69,6 +69,9 @@ class TS_TOF_Shortcode
                         <div class="d-bignum" id="d-num">01</div>
                         <div class="d-title" id="d-name">—</div>
                         <div class="d-tag" id="d-area">—</div>
+                        <div class="d-img-wrap" id="d-img-wrap" style="display:none;">
+                            <img id="d-img" src="" alt="Outlet Image">
+                        </div>
                         <div class="d-div"></div>
 
                         <div class="d-row">
@@ -239,13 +242,14 @@ class TS_TOF_Shortcode
             let selId = null;
 
             function mkIcon(o, act) {
+                let imgHtml = o.img ? '<div class="ts-tip-img" style="background-image:url('+o.img+')"></div>' : '';
                 return L.divIcon({
                     className: '',
                     html:
                         '<div class="ts-m' + (act ? ' act' : '') + '" id="mw' + o.id + '">' +
                         '<div class="ts-ring"></div>' +
                         '<div class="ts-core">' + String(o.id).padStart(2, '0') + '</div>' +
-                        '<div class="ts-tip">' + o.name + '</div>' +
+                        '<div class="ts-tip ' + (o.img ? 'has-img' : '') + '">' + imgHtml + '<div class="ts-tip-txt">' + o.name + '</div></div>' +
                         '</div>',
                     iconSize: [44, 44],
                     iconAnchor: [22, 22],
@@ -286,6 +290,7 @@ class TS_TOF_Shortcode
                     d.style.animationDelay = (i * 0.045) + 's';
 
                     d.innerHTML =
+                        (o.img ? '<div class="oi-bg-img" style="background-image:url(' + o.img + ')"></div>' : '') +
                         '<div class="oi-num">' + String(o.id).padStart(2, '0') + '</div>' +
                         '<div class="oi-info">' +
                         '<div class="oi-name">' + o.name + '</div>' +
@@ -335,6 +340,17 @@ class TS_TOF_Shortcode
                 root.querySelector('#d-num').textContent = String(o.id).padStart(2, '0');
                 root.querySelector('#d-name').textContent = o.name;
                 root.querySelector('#d-area').textContent = o.area;
+                
+                const dImgWrap = root.querySelector('#d-img-wrap');
+                const dImg = root.querySelector('#d-img');
+                if (o.img) {
+                    dImg.src = o.img;
+                    dImgWrap.style.display = 'block';
+                } else {
+                    dImgWrap.style.display = 'none';
+                    dImg.src = '';
+                }
+
                 root.querySelector('#d-addr').textContent = o.addr;
                 root.querySelector('#d-hrs').textContent = o.hrs;
                 root.querySelector('#d-tel').textContent = o.phone;
@@ -864,6 +880,23 @@ class TS_TOF_Shortcode
                 width: fit-content;
             }
 
+            .ts-tyre-outlet-widget .d-img-wrap {
+                width: 100%;
+                height: 140px;
+                background-color: var(--surface2);
+                border-radius: 4px;
+                overflow: hidden;
+                margin-bottom: 22px;
+                position: relative;
+                z-index: 1;
+                border: 1px solid var(--border);
+            }
+            .ts-tyre-outlet-widget .d-img-wrap img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+            }
             .ts-tyre-outlet-widget .d-div {
                 height: 1px;
                 background: var(--border);
@@ -1067,27 +1100,55 @@ class TS_TOF_Shortcode
 
             .ts-tyre-outlet-widget .ts-tip {
                 position: absolute;
-                white-space: nowrap;
-                bottom: calc(100% + 8px);
-                left: 50%;
-                transform: translateX(-50%);
-                background: rgba(16,16,16,.95);
+                top: -30px;
+                background: var(--surface2);
+                padding: 0;
                 border: 1px solid var(--border2);
-                padding: 4px 10px;
-                font-family: 'Barlow Condensed', sans-serif;
-                font-size: 11px;
-                letter-spacing: 1.5px;
+                border-radius: 4px;
+                font-size: 10px;
+                letter-spacing: 1px;
                 text-transform: uppercase;
                 color: var(--white);
-                border-radius: 2px;
-                pointer-events: none;
+                white-space: nowrap;
                 opacity: 0;
-                transition: opacity .2s;
+                transform: translateY(10px);
+                transition: all .2s;
+                pointer-events: none;
+                box-shadow: 0 4px 12px rgba(0,0,0,.4);
                 z-index: 10;
+                overflow: hidden;
+            }
+            .ts-tyre-outlet-widget .ts-tip-txt {
+                padding: 4px 10px;
+            }
+            .ts-tyre-outlet-widget .ts-tip-img {
+                width: 100%;
+                height: 60px;
+                background-size: cover;
+                background-position: center;
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+                display: none;
+            }
+            .ts-tyre-outlet-widget .ts-tip.has-img .ts-tip-img {
+                display: block;
+            }
+            .ts-tyre-outlet-widget .oi-bg-img {
+                position: absolute;
+                inset: 0;
+                background-size: cover;
+                background-position: center;
+                opacity: 0;
+                transition: opacity 0.3s;
+                z-index: -1;
+            }
+            .ts-tyre-outlet-widget .oi:hover .oi-bg-img,
+            .ts-tyre-outlet-widget .oi.act .oi-bg-img {
+                opacity: 0.15;
             }
 
             .ts-tyre-outlet-widget .ts-m:hover .ts-tip {
                 opacity: 1;
+                transform: translateY(0);
             }
 
             @keyframes tsTyreRp {
@@ -1317,7 +1378,7 @@ class TS_TOF_Shortcode
             'post_type'      => 'ts_outlet',
             'post_status'    => 'publish',
             'posts_per_page' => -1,
-            'orderby'        => 'title',
+            'orderby'        => 'menu_order',
             'order'          => 'ASC',
         ]);
 
@@ -1332,6 +1393,11 @@ class TS_TOF_Shortcode
                 continue;
             }
 
+            $img = get_the_post_thumbnail_url($post->ID, 'large');
+            if (!$img) {
+                $img = '';
+            }
+
             $outlets[] = [
                 'id'    => $i,
                 'name'  => $post->post_title,
@@ -1342,6 +1408,7 @@ class TS_TOF_Shortcode
                 'lat'   => (float) $lat,
                 'lng'   => (float) $lng,
                 'maps'  => get_post_meta($post->ID, '_ts_outlet_maps_url', true),
+                'img'   => $img,
             ];
 
             $i++;

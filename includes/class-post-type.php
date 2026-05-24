@@ -14,6 +14,7 @@ class TS_TOF_Post_Type
         add_filter('manage_ts_outlet_posts_columns', [$this, 'columns']);
         add_action('manage_ts_outlet_posts_custom_column', [$this, 'column_data'], 10, 2);
         add_filter('manage_edit-ts_outlet_sortable_columns', [$this, 'sortable_columns']);
+        add_action('pre_get_posts', [$this, 'sort_backend_outlets']);
     }
 
     public function register()
@@ -39,7 +40,7 @@ class TS_TOF_Post_Type
             'show_ui'      => true,
             'show_in_menu' => true,
             'menu_icon'    => 'dashicons-location',
-            'supports'     => ['title'],
+            'supports'     => ['title', 'thumbnail', 'page-attributes'],
             'rewrite'      => false,
             'capability_type' => 'post',
             'map_meta_cap' => true,
@@ -185,9 +186,11 @@ class TS_TOF_Post_Type
         foreach ($columns as $k => $v) {
             $new[$k] = $v;
             if ('title' === $k) {
+                $new['image'] = __('Image', 'ts-tof');
                 $new['area'] = __('Area', 'ts-tof');
                 $new['phone'] = __('Phone', 'ts-tof');
                 $new['coordinates'] = __('Coordinates', 'ts-tof');
+                $new['menu_order'] = __('Order', 'ts-tof');
             }
         }
         return $new;
@@ -196,6 +199,11 @@ class TS_TOF_Post_Type
     public function column_data($column, $post_id)
     {
         switch ($column) {
+            case 'image':
+                if (has_post_thumbnail($post_id)) {
+                    echo get_the_post_thumbnail($post_id, [50, 50]);
+                }
+                break;
             case 'area':
                 echo esc_html(get_post_meta($post_id, '_ts_outlet_area', true));
                 break;
@@ -209,12 +217,28 @@ class TS_TOF_Post_Type
                     echo esc_html("{$lat}, {$lng}");
                 }
                 break;
+            case 'menu_order':
+                $post = get_post($post_id);
+                echo esc_html($post->menu_order);
+                break;
         }
     }
 
     public function sortable_columns($columns)
     {
         $columns['area'] = 'area';
+        $columns['menu_order'] = 'menu_order';
         return $columns;
+    }
+
+    public function sort_backend_outlets($query)
+    {
+        if (is_admin() && $query->is_main_query() && $query->get('post_type') === 'ts_outlet') {
+            $orderby = $query->get('orderby');
+            if (!$orderby) {
+                $query->set('orderby', 'menu_order');
+                $query->set('order', 'ASC');
+            }
+        }
     }
 }
