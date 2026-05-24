@@ -120,19 +120,6 @@ class SC_OF_Shortcode
 
                     <div id="hdr">
                         <div class="logo-row">
-                            <svg class="logo-svg" width="38" height="38" viewBox="0 0 38 38" fill="none">
-                                <circle cx="19" cy="19" r="17" stroke="currentColor" stroke-width="1.5" />
-                                <circle cx="19" cy="19" r="9.5" stroke="currentColor" stroke-width="1.5" />
-                                <circle cx="19" cy="19" r="3" fill="currentColor" />
-                                <line x1="19" y1="1.5" x2="19" y2="9.5" stroke="currentColor" stroke-width="1.2" />
-                                <line x1="19" y1="28.5" x2="19" y2="36.5" stroke="currentColor" stroke-width="1.2" />
-                                <line x1="1.5" y1="19" x2="9.5" y2="19" stroke="currentColor" stroke-width="1.2" />
-                                <line x1="28.5" y1="19" x2="36.5" y2="19" stroke="currentColor" stroke-width="1.2" />
-                                <line x1="5" y1="5" x2="11" y2="11" stroke="currentColor" stroke-width="1" />
-                                <line x1="27" y1="27" x2="33" y2="33" stroke="currentColor" stroke-width="1" />
-                                <line x1="33" y1="5" x2="27" y2="11" stroke="currentColor" stroke-width="1" />
-                                <line x1="11" y1="27" x2="5" y2="33" stroke="currentColor" stroke-width="1" />
-                            </svg>
                             <div>
                                 <div class="brand"><?php echo $brand_first . $brand_last; ?></div>
                                 <div class="sub"><?php echo esc_html($brand_sub); ?></div>
