@@ -66,7 +66,7 @@ class SC_OF_Post_Type
             'labels'       => $labels,
             'public'       => false,
             'show_ui'      => true,
-            'show_in_menu' => 'supercraft',
+            'show_in_menu' => false,
             'menu_icon'    => 'dashicons-location',
             'supports'     => ['title', 'thumbnail', 'page-attributes'],
             'rewrite'      => false,

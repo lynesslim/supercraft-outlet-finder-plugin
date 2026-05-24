@@ -424,6 +424,21 @@ class SC_OF_Shortcode
         $s = function ($key) {
             return SC_OF_Settings::get($key);
         };
+        $c = function ($key) use ($s) {
+            $val = $s($key);
+            if (strpos($val, 'e-global-color') === 0) {
+                return 'var(--' . esc_attr($val) . ')';
+            }
+            return esc_attr($val);
+        };
+        $f = function ($key) use ($s) {
+            $val = $s($key);
+            if ($val === 'inherit') return 'inherit';
+            if (strpos($val, 'e-global-typography') === 0) {
+                return 'var(--' . esc_attr($val) . '-font-family), sans-serif';
+            }
+            return esc_attr($val) . ', sans-serif';
+        };
         ?>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -441,16 +456,16 @@ class SC_OF_Shortcode
 
             .sc-outlet-widget {
                 /* Color variables - Support Elementor Global variables with plugin settings as fallbacks */
-                --gold: var(--e-global-color-primary, <?php echo $s('color_primary'); ?>);
-                --black: var(--e-global-color-bg, <?php echo $s('color_bg'); ?>);
-                --dark: var(--e-global-color-sidebar-bg, <?php echo $s('color_dark'); ?>);
-                --surface: var(--e-global-color-surface, <?php echo $s('color_surface'); ?>);
-                --surface2: var(--e-global-color-secondary, <?php echo $s('color_surface2'); ?>);
-                --border: <?php echo $s('color_border'); ?>;
-                --border2: <?php echo $s('color_border2'); ?>;
-                --white: var(--e-global-color-text, <?php echo $s('color_text'); ?>);
-                --muted: var(--e-global-color-muted, <?php echo $s('color_muted'); ?>);
-                --muted2: var(--e-global-color-accent, <?php echo $s('color_muted2'); ?>);
+                --gold: <?php echo $c('color_primary'); ?>;
+                --black: <?php echo $c('color_bg'); ?>;
+                --dark: <?php echo $c('color_dark'); ?>;
+                --surface: <?php echo $c('color_surface'); ?>;
+                --surface2: <?php echo $c('color_surface2'); ?>;
+                --border: <?php echo $c('color_border'); ?>;
+                --border2: <?php echo $c('color_border2'); ?>;
+                --white: <?php echo $c('color_text'); ?>;
+                --muted: <?php echo $c('color_muted'); ?>;
+                --muted2: <?php echo $c('color_muted2'); ?>;
                 
                 --gold-dim: color-mix(in srgb, var(--gold) 8%, transparent);
                 --gold-glow: color-mix(in srgb, var(--gold) 25%, transparent);
@@ -458,8 +473,8 @@ class SC_OF_Shortcode
                 --sw: 380px;
 
                 /* Typography variables - Support Elementor Global Typography with plugin fonts as fallbacks */
-                --font-primary: var(--e-global-typography-primary-font-family, 'Anton'), sans-serif;
-                --font-body: var(--e-global-typography-text-font-family, 'Barlow Condensed'), sans-serif;
+                --font-primary: <?php echo $f('font_heading'); ?>;
+                --font-body: <?php echo $f('font_body'); ?>;
 
                 width: 100%;
                 height: 100vh;
