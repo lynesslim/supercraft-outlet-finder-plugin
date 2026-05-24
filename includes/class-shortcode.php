@@ -37,7 +37,7 @@ class TS_TOF_Shortcode
         $brand_first = $brand_parts[0] ?? $brand_upper;
         $brand_last  = isset($brand_parts[1]) ? ' <em>' . esc_html($brand_parts[1]) . '</em>' : '';
 
-        $json = htmlspecialchars(json_encode($outlets), ENT_QUOTES, 'UTF-8');
+        $json = wp_json_encode($outlets, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
 
         $outlet_count = count($outlets);
 
