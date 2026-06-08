@@ -15,6 +15,7 @@ class SC_OF_Post_Type
         add_action('manage_sc_outlet_posts_custom_column', [$this, 'column_data'], 10, 2);
         add_filter('manage_edit-sc_outlet_sortable_columns', [$this, 'sortable_columns']);
         add_action('pre_get_posts', [$this, 'sort_backend_outlets']);
+        add_action('admin_enqueue_scripts', [$this, 'enqueue_admin']);
         add_action('admin_menu', [$this, 'ensure_supercraft_menu'], 9);
     }
 
@@ -43,6 +44,29 @@ class SC_OF_Post_Type
                 30
             );
         }
+    }
+
+    public function enqueue_admin($hook)
+    {
+        if ('post.php' !== $hook && 'post-new.php' !== $hook) {
+            return;
+        }
+        global $post_type;
+        if ('sc_outlet' !== $post_type) {
+            return;
+        }
+        wp_enqueue_style('wp-color-picker');
+        wp_enqueue_script('wp-color-picker');
+        
+        add_action('admin_footer', function () {
+            ?>
+            <script>
+            jQuery(function ($) {
+                $('.sc-of-color-picker').wpColorPicker();
+            });
+            </script>
+            <?php
+        });
     }
 
     public function register()
@@ -173,6 +197,14 @@ class SC_OF_Post_Type
             <input type="url" id="_sc_outlet_maps_url" name="_sc_outlet_maps_url"
                    value="<?php echo esc_attr($values['_sc_outlet_maps_url']); ?>">
         </div>
+
+        <div class="sc-of-field">
+            <label for="_sc_outlet_marker_color"><?php esc_html_e('Marker Color', 'supercraft-of'); ?></label>
+            <input type="text" id="_sc_outlet_marker_color" name="_sc_outlet_marker_color"
+                   value="<?php echo esc_attr(get_post_meta($post->ID, '_sc_outlet_marker_color', true)); ?>"
+                   class="sc-of-color-picker" data-default-color="">
+            <p class="description" style="margin-top:4px;color:#888;font-size:12px;"><?php esc_html_e('Leave empty to use the global primary color.', 'supercraft-of'); ?></p>
+        </div>
         <?php
     }
 
@@ -199,6 +231,7 @@ class SC_OF_Post_Type
             '_sc_outlet_lat',
             '_sc_outlet_lng',
             '_sc_outlet_maps_url',
+            '_sc_outlet_marker_color',
         ];
 
         foreach ($fields as $key) {

@@ -31,6 +31,7 @@ class SC_OF_Shortcode
         $map_lng     = SC_OF_Settings::get('map_center_lng');
         $map_zoom    = SC_OF_Settings::get('map_zoom');
         $fly_zoom    = SC_OF_Settings::get('fly_zoom');
+        $marker_style = SC_OF_Settings::get('marker_style');
 
         $brand_upper = strtoupper($brand);
         $brand_parts = explode(' ', $brand_upper, 2);
@@ -178,6 +179,7 @@ class SC_OF_Shortcode
                 return;
             }
 
+            const markerStyle = '<?php echo esc_js($marker_style); ?>';
             const outlets = <?php echo $json; ?>;
 
             const cur = root.querySelector('#cur');
@@ -230,15 +232,28 @@ class SC_OF_Shortcode
             let selId = null;
 
             function mkIcon(o, act) {
-                let imgHtml = o.img ? '<div class="sc-tip-img" style="background-image:url('+o.img+')"></div>' : '';
-                return L.divIcon({
-                    className: '',
-                    html:
-                        '<div class="sc-m' + (act ? ' act' : '') + '" id="mw' + o.id + '">' +
+                var color = o.color || '';
+                var colorStyle = color ? '--mc:' + color + ';' : '';
+                var imgHtml = o.img ? '<div class="sc-tip-img" style="background-image:url('+o.img+')"></div>' : '';
+                var innerHtml;
+                if (markerStyle === 'pinpoint') {
+                    innerHtml =
+                        '<div class="sc-m sc-pin' + (act ? ' act' : '') + '" id="mw' + o.id + '" style="' + colorStyle + '">' +
+                        '<div class="sc-ring"></div>' +
+                        '<div class="sc-core"><div class="sc-dot"></div></div>' +
+                        '<div class="sc-tip ' + (o.img ? 'has-img' : '') + '">' + imgHtml + '<div class="sc-tip-txt">' + o.name + '</div></div>' +
+                        '</div>';
+                } else {
+                    innerHtml =
+                        '<div class="sc-m' + (act ? ' act' : '') + '" id="mw' + o.id + '" style="' + colorStyle + '">' +
                         '<div class="sc-ring"></div>' +
                         '<div class="sc-core">' + String(o.id).padStart(2, '0') + '</div>' +
                         '<div class="sc-tip ' + (o.img ? 'has-img' : '') + '">' + imgHtml + '<div class="sc-tip-txt">' + o.name + '</div></div>' +
-                        '</div>',
+                        '</div>';
+                }
+                return L.divIcon({
+                    className: '',
+                    html: innerHtml,
                     iconSize: [44, 44],
                     iconAnchor: [22, 22],
                     popupAnchor: [0, -28]
@@ -400,6 +415,13 @@ class SC_OF_Shortcode
             window.addEventListener('resize', function () {
                 map.invalidateSize();
             });
+
+            var listEl = root.querySelector('#list');
+            if (listEl) {
+                listEl.addEventListener('wheel', function (e) {
+                    e.stopPropagation();
+                }, { passive: false });
+            }
         });
         </script>
         <?php
@@ -650,6 +672,7 @@ class SC_OF_Shortcode
                 flex: 1;
                 overflow-y: auto;
                 overflow-x: hidden;
+                overscroll-behavior: contain;
                 position: relative;
                 z-index: 1;
                 padding: 6px 0;
@@ -1073,7 +1096,7 @@ class SC_OF_Shortcode
                 width: 44px;
                 height: 44px;
                 border-radius: 50%;
-                border: 1.5px solid color-mix(in srgb, var(--gold) 20%, transparent);
+                border: 1.5px solid color-mix(in srgb, var(--mc, var(--gold)) 20%, transparent);
                 animation: scRp 2.4s ease-out infinite;
             }
 
@@ -1081,14 +1104,14 @@ class SC_OF_Shortcode
                 width: 26px;
                 height: 26px;
                 background: var(--dark);
-                border: 1.5px solid color-mix(in srgb, var(--gold) 55%, transparent);
+                border: 1.5px solid color-mix(in srgb, var(--mc, var(--gold)) 55%, transparent);
                 border-radius: 50%;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 font-family: var(--font-primary);
                 font-size: 9px;
-                color: var(--gold);
+                color: var(--mc, var(--gold));
                 letter-spacing: .5px;
                 position: relative;
                 z-index: 1;
@@ -1096,18 +1119,42 @@ class SC_OF_Shortcode
             }
 
             .sc-outlet-widget .sc-m.act .sc-core {
-                background: var(--gold);
+                background: var(--mc, var(--gold));
                 color: var(--black);
                 width: 34px;
                 height: 34px;
                 font-size: 11px;
-                box-shadow: 0 0 0 4px color-mix(in srgb, var(--gold) 15%, transparent),
-                            0 0 20px color-mix(in srgb, var(--gold) 30%, transparent);
+                box-shadow: 0 0 0 4px color-mix(in srgb, var(--mc, var(--gold)) 15%, transparent),
+                            0 0 20px color-mix(in srgb, var(--mc, var(--gold)) 30%, transparent);
             }
 
             .sc-outlet-widget .sc-m.act .sc-ring {
                 animation: scRpa 1s ease-out infinite;
-                border-color: color-mix(in srgb, var(--gold) 50%, transparent);
+                border-color: color-mix(in srgb, var(--mc, var(--gold)) 50%, transparent);
+            }
+
+            .sc-outlet-widget .sc-pin .sc-core {
+                width: 18px;
+                height: 18px;
+                border-width: 2px;
+            }
+
+            .sc-outlet-widget .sc-pin .sc-dot {
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                background: var(--mc, var(--gold));
+            }
+
+            .sc-outlet-widget .sc-pin.act .sc-core {
+                width: 24px;
+                height: 24px;
+            }
+
+            .sc-outlet-widget .sc-pin.act .sc-dot {
+                width: 8px;
+                height: 8px;
+                background: var(--black);
             }
 
             .sc-outlet-widget .sc-tip {
@@ -1135,11 +1182,15 @@ class SC_OF_Shortcode
             }
             .sc-outlet-widget .sc-tip-img {
                 width: 100%;
-                height: 60px;
+                aspect-ratio: 3 / 2;
                 background-size: cover;
                 background-position: center;
                 border-bottom: 1px solid rgba(255,255,255,0.1);
                 display: none;
+                transition: transform 0.3s cubic-bezier(.16,1,.3,1);
+            }
+            .sc-outlet-widget .sc-m:hover .sc-tip-img {
+                transform: scale(1.08);
             }
             .sc-outlet-widget .sc-tip.has-img .sc-tip-img {
                 display: block;
@@ -1410,6 +1461,7 @@ class SC_OF_Shortcode
                 $img = '';
             }
 
+            $marker_color = get_post_meta($post->ID, '_sc_outlet_marker_color', true);
             $outlets[] = [
                 'id'    => $i,
                 'name'  => $post->post_title,
@@ -1421,6 +1473,7 @@ class SC_OF_Shortcode
                 'lng'   => (float) $lng,
                 'maps'  => get_post_meta($post->ID, '_sc_outlet_maps_url', true),
                 'img'   => $img,
+                'color' => !empty($marker_color) ? $marker_color : '',
             ];
 
             $i++;
