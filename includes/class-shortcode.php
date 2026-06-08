@@ -1139,8 +1139,8 @@ class SC_OF_Shortcode
                 left: 50%;
                 transform: translate(-50%, 0);
                 color: var(--mc, var(--gold));
-                width: 32px;
-                height: 44px;
+                width: 26px;
+                height: 35px;
                 display: flex;
                 justify-content: center;
                 align-items: flex-end;
