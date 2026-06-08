@@ -240,7 +240,7 @@ class SC_OF_Shortcode
                     innerHtml =
                         '<div class="sc-m sc-pin' + (act ? ' act' : '') + '" id="mw' + o.id + '" style="' + colorStyle + '">' +
                         '<div class="sc-ring"></div>' +
-                        '<div class="sc-core"><div class="sc-dot"></div></div>' +
+                        '<div class="sc-pin-svg"><svg viewBox="0 0 24 34" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.37 0 0 5.37 0 12C0 21 12 34 12 34C12 34 24 21 24 12C24 5.37 18.63 0 12 0ZM12 16C9.79 16 8 14.21 8 12C8 9.79 9.79 8 12 8C14.21 8 16 9.79 16 12C16 14.21 14.21 16 12 16Z" fill="currentColor"/></svg></div>' +
                         '<div class="sc-tip ' + (o.img ? 'has-img' : '') + '">' + imgHtml + '<div class="sc-tip-txt">' + o.name + '</div></div>' +
                         '</div>';
                 } else {
@@ -1133,28 +1133,33 @@ class SC_OF_Shortcode
                 border-color: color-mix(in srgb, var(--mc, var(--gold)) 50%, transparent);
             }
 
-            .sc-outlet-widget .sc-pin .sc-core {
-                width: 18px;
-                height: 18px;
-                border-width: 2px;
+            .sc-outlet-widget .sc-pin-svg {
+                position: absolute;
+                bottom: 50%;
+                left: 50%;
+                transform: translate(-50%, 0);
+                color: var(--mc, var(--gold));
+                width: 32px;
+                height: 44px;
+                display: flex;
+                justify-content: center;
+                align-items: flex-end;
+                transition: all .35s cubic-bezier(.16,1,.3,1);
+                filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));
             }
 
-            .sc-outlet-widget .sc-pin .sc-dot {
-                width: 6px;
-                height: 6px;
-                border-radius: 50%;
-                background: var(--mc, var(--gold));
+            .sc-outlet-widget .sc-pin-svg svg {
+                width: 100%;
+                height: 100%;
             }
 
-            .sc-outlet-widget .sc-pin.act .sc-core {
-                width: 24px;
-                height: 24px;
+            .sc-outlet-widget .sc-pin.act .sc-pin-svg {
+                transform: translate(-50%, -6px) scale(1.15);
+                filter: drop-shadow(0 8px 12px rgba(0,0,0,0.6));
             }
 
-            .sc-outlet-widget .sc-pin.act .sc-dot {
-                width: 8px;
-                height: 8px;
-                background: var(--black);
+            .sc-outlet-widget .sc-pin .sc-ring {
+                display: none;
             }
 
             .sc-outlet-widget .sc-tip {

@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Supercraft Outlet Finder
  * Description: Interactive outlet finder with Leaflet map. Manage outlets and styling from wp-admin. Shortcode: <code>[supercraft_outlets]</code>
- * Version:     1.0.7
+ * Version:     1.0.8
  * Author:      Your Name
  * Text Domain: supercraft-of
  * Domain Path: /languages
@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('SC_OF_VERSION', '1.0.7');
+define('SC_OF_VERSION', '1.0.8');
 define('SC_OF_FILE', __FILE__);
 define('SC_OF_PATH', plugin_dir_path(__FILE__));
 define('SC_OF_URL', plugin_dir_url(__FILE__));
