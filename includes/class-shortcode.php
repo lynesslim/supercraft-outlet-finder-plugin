@@ -1136,8 +1136,9 @@ class SC_OF_Shortcode
             .sc-outlet-widget .sc-core {
                 width: 28px;
                 height: 28px;
-                background: #111111;
-                border: 2px solid var(--mc, var(--gold));
+                background: var(--mc, var(--gold));
+                color: #000000;
+                border: 2px solid #ffffff;
                 box-shadow: 0 3px 10px rgba(0,0,0,0.35);
                 border-radius: 50%;
                 display: flex;
@@ -1146,7 +1147,6 @@ class SC_OF_Shortcode
                 font-family: var(--font-primary);
                 font-size: 10px;
                 font-weight: 700;
-                color: var(--mc, var(--gold));
                 letter-spacing: .5px;
                 position: relative;
                 z-index: 1;
@@ -1154,19 +1154,19 @@ class SC_OF_Shortcode
             }
 
             .sc-outlet-widget .sc-m:hover .sc-core {
-                transform: scale(1.1);
+                transform: scale(1.15);
                 box-shadow: 0 4px 14px rgba(0,0,0,0.45);
             }
 
             .sc-outlet-widget .sc-m.act .sc-core {
                 background: var(--mc, var(--gold));
                 color: #000000;
-                border-color: #ffffff;
+                border: 2.5px solid #ffffff;
                 width: 36px;
                 height: 36px;
                 font-size: 12px;
-                box-shadow: 0 4px 16px rgba(0,0,0,0.5),
-                            0 0 0 3px color-mix(in srgb, var(--mc, var(--gold)) 40%, transparent);
+                box-shadow: 0 4px 18px rgba(0,0,0,0.5),
+                            0 0 0 4px color-mix(in srgb, var(--mc, var(--gold)) 40%, transparent);
             }
 
             .sc-outlet-widget .sc-m.act .sc-ring {
