@@ -1128,21 +1128,24 @@ class SC_OF_Shortcode
                 width: 44px;
                 height: 44px;
                 border-radius: 50%;
-                border: 1.5px solid color-mix(in srgb, var(--mc, var(--gold)) 20%, transparent);
+                border: 2px solid var(--mc, var(--gold));
+                opacity: .35;
                 animation: scRp 2.4s ease-out infinite;
             }
 
             .sc-outlet-widget .sc-core {
-                width: 26px;
-                height: 26px;
-                background: var(--dark);
-                border: 1.5px solid color-mix(in srgb, var(--mc, var(--gold)) 55%, transparent);
+                width: 28px;
+                height: 28px;
+                background: #111111;
+                border: 2px solid var(--mc, var(--gold));
+                box-shadow: 0 3px 10px rgba(0,0,0,0.35);
                 border-radius: 50%;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 font-family: var(--font-primary);
-                font-size: 9px;
+                font-size: 10px;
+                font-weight: 700;
                 color: var(--mc, var(--gold));
                 letter-spacing: .5px;
                 position: relative;
@@ -1150,19 +1153,26 @@ class SC_OF_Shortcode
                 transition: all .35s cubic-bezier(.16,1,.3,1);
             }
 
+            .sc-outlet-widget .sc-m:hover .sc-core {
+                transform: scale(1.1);
+                box-shadow: 0 4px 14px rgba(0,0,0,0.45);
+            }
+
             .sc-outlet-widget .sc-m.act .sc-core {
                 background: var(--mc, var(--gold));
-                color: var(--black);
-                width: 34px;
-                height: 34px;
-                font-size: 11px;
-                box-shadow: 0 0 0 4px color-mix(in srgb, var(--mc, var(--gold)) 15%, transparent),
-                            0 0 20px color-mix(in srgb, var(--mc, var(--gold)) 30%, transparent);
+                color: #000000;
+                border-color: #ffffff;
+                width: 36px;
+                height: 36px;
+                font-size: 12px;
+                box-shadow: 0 4px 16px rgba(0,0,0,0.5),
+                            0 0 0 3px color-mix(in srgb, var(--mc, var(--gold)) 40%, transparent);
             }
 
             .sc-outlet-widget .sc-m.act .sc-ring {
                 animation: scRpa 1s ease-out infinite;
-                border-color: color-mix(in srgb, var(--mc, var(--gold)) 50%, transparent);
+                border-color: var(--mc, var(--gold));
+                opacity: .6;
             }
 
             .sc-outlet-widget .sc-pin-svg {
