@@ -104,10 +104,22 @@ class SC_OF_Settings
         global $menu;
 
         $supercraft_parent_slug = '';
+
+        // 1. Check if Supercraft Master Plugin is active (slug: 'supercraft-dashboard')
         if (is_array($menu)) {
             foreach ($menu as $item) {
-                if (isset($item[0]) && strpos($item[0], 'Supercraft') !== false) {
-                    $supercraft_parent_slug = isset($item[2]) ? $item[2] : '';
+                if (isset($item[2]) && $item[2] === 'supercraft-dashboard') {
+                    $supercraft_parent_slug = 'supercraft-dashboard';
+                    break;
+                }
+            }
+        }
+
+        // 2. Check if a generic 'supercraft' parent menu exists
+        if (!$supercraft_parent_slug && is_array($menu)) {
+            foreach ($menu as $item) {
+                if (isset($item[2]) && $item[2] === 'supercraft') {
+                    $supercraft_parent_slug = 'supercraft';
                     break;
                 }
             }
@@ -125,20 +137,12 @@ class SC_OF_Settings
         } else {
             add_menu_page(
                 __('Supercraft Outlet Finder', 'supercraft-of'),
-                __('Supercraft', 'supercraft-of'),
+                __('Outlet Finder', 'supercraft-of'),
                 'manage_options',
                 'supercraft-outlet-finder',
                 [$this, 'render_page'],
                 'dashicons-location-alt',
                 30
-            );
-            add_submenu_page(
-                'supercraft-outlet-finder',
-                __('Supercraft Outlet Finder', 'supercraft-of'),
-                __('Outlet Finder', 'supercraft-of'),
-                'manage_options',
-                'supercraft-outlet-finder',
-                [$this, 'render_page']
             );
         }
     }
