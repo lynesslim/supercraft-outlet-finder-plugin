@@ -32,6 +32,7 @@ class SC_OF_Shortcode
         $map_zoom    = SC_OF_Settings::get('map_zoom');
         $fly_zoom    = SC_OF_Settings::get('fly_zoom');
         $marker_style = SC_OF_Settings::get('marker_style');
+        $map_style    = SC_OF_Settings::get('map_style');
 
         $brand_upper = strtoupper($brand);
         $brand_parts = explode(' ', $brand_upper, 2);
@@ -222,8 +223,18 @@ class SC_OF_Shortcode
                 position: 'bottomright'
             }).addTo(map);
 
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+            var tileUrl = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+            var tileAttr = '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/attributions">CARTO</a>';
+
+            <?php if ($map_style === 'light') : ?>
+            tileUrl = 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+            <?php elseif ($map_style === 'streets') : ?>
+            tileUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
+            tileAttr = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
+            <?php endif; ?>
+
+            L.tileLayer(tileUrl, {
+                attribution: tileAttr,
                 subdomains: 'abcd',
                 maxZoom: 20
             }).addTo(map);

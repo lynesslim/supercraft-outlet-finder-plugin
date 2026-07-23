@@ -159,6 +159,7 @@ class SC_OF_Settings
         add_settings_field('map_zoom', __('Default Map Zoom', 'supercraft-of'), [$this, 'field_number'], 'supercraft-outlet-finder', 'sc_of_general', ['key' => 'map_zoom', 'default' => '11', 'min' => 1, 'max' => 20]);
         add_settings_field('fly_zoom', __('Fly-to Zoom Level', 'supercraft-of'), [$this, 'field_number'], 'supercraft-outlet-finder', 'sc_of_general', ['key' => 'fly_zoom', 'default' => '15', 'min' => 1, 'max' => 20]);
         add_settings_field('marker_style', __('Marker Style', 'supercraft-of'), [$this, 'field_select'], 'supercraft-outlet-finder', 'sc_of_general', ['key' => 'marker_style', 'default' => 'numbered', 'options' => ['numbered' => __('Numbered (Default)', 'supercraft-of'), 'pinpoint' => __('Pinpoint', 'supercraft-of')]]);
+        add_settings_field('map_style', __('Map Tile Style', 'supercraft-of'), [$this, 'field_select'], 'supercraft-outlet-finder', 'sc_of_general', ['key' => 'map_style', 'default' => 'dark', 'options' => ['dark' => __('Dark (CartoDB)', 'supercraft-of'), 'light' => __('Light (CartoDB)', 'supercraft-of'), 'streets' => __('Streets (OSM)', 'supercraft-of')]]);
 
         add_settings_section(
             'sc_of_styling',
@@ -252,6 +253,7 @@ class SC_OF_Settings
             'font_heading'    => 'inherit',
             'font_body'       => 'inherit',
             'marker_style'    => 'numbered',
+            'map_style'       => 'dark',
         ];
     }
 
