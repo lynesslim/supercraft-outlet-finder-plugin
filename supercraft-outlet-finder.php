@@ -29,15 +29,29 @@ new SC_OF_Shortcode();
 
 if (is_admin()) {
     new SC_OF_Settings();
+}
 
-    $updateChecker = \YahnisElsts\PluginUpdateChecker\v5p5\PucFactory::buildUpdateChecker(
-        'https://github.com/lynesslim/supercraft-outlet-finder-plugin',
-        SC_OF_FILE,
-        'supercraft-outlet-finder'
-    );
+/**
+ * Initialize Plugin Update Checker for automatic updates from GitHub
+ */
+$updateChecker = \YahnisElsts\PluginUpdateChecker\v5p5\PucFactory::buildUpdateChecker(
+    'https://github.com/lynesslim/supercraft-outlet-finder-plugin',
+    SC_OF_FILE,
+    'supercraft-outlet-finder'
+);
 
-    if ($updateChecker) {
-        $updateChecker->setBranch('main');
+if ($updateChecker) {
+    $updateChecker->setBranch('main');
+
+    // Enable downloading release assets (.zip) attached to GitHub Releases if available
+    $vcsApi = $updateChecker->getVcsApi();
+    if ($vcsApi && method_exists($vcsApi, 'enableReleaseAssets')) {
+        $vcsApi->enableReleaseAssets();
+    }
+
+    // Support optional private repo authentication via wp-config constant SC_OF_GITHUB_TOKEN
+    if (defined('SC_OF_GITHUB_TOKEN') && SC_OF_GITHUB_TOKEN) {
+        $updateChecker->setAuthentication(SC_OF_GITHUB_TOKEN);
     }
 }
 
