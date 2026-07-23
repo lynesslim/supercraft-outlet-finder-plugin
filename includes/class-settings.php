@@ -159,7 +159,22 @@ class SC_OF_Settings
         add_settings_field('map_zoom', __('Default Map Zoom', 'supercraft-of'), [$this, 'field_number'], 'supercraft-outlet-finder', 'sc_of_general', ['key' => 'map_zoom', 'default' => '11', 'min' => 1, 'max' => 20]);
         add_settings_field('fly_zoom', __('Fly-to Zoom Level', 'supercraft-of'), [$this, 'field_number'], 'supercraft-outlet-finder', 'sc_of_general', ['key' => 'fly_zoom', 'default' => '15', 'min' => 1, 'max' => 20]);
         add_settings_field('marker_style', __('Marker Style', 'supercraft-of'), [$this, 'field_select'], 'supercraft-outlet-finder', 'sc_of_general', ['key' => 'marker_style', 'default' => 'numbered', 'options' => ['numbered' => __('Numbered (Default)', 'supercraft-of'), 'pinpoint' => __('Pinpoint', 'supercraft-of')]]);
-        add_settings_field('map_style', __('Map Tile Style', 'supercraft-of'), [$this, 'field_select'], 'supercraft-outlet-finder', 'sc_of_general', ['key' => 'map_style', 'default' => 'dark', 'options' => ['dark' => __('Dark (CartoDB)', 'supercraft-of'), 'light' => __('Light (CartoDB)', 'supercraft-of'), 'streets' => __('Streets (OSM)', 'supercraft-of')]]);
+        add_settings_field('map_style', __('Map Tile Style', 'supercraft-of'), [$this, 'field_select'], 'supercraft-outlet-finder', 'sc_of_general', [
+            'key' => 'map_style',
+            'default' => 'voyager',
+            'options' => [
+                'voyager'      => __('Modern Colorful (CARTO Voyager - Recommended)', 'supercraft-of'),
+                'dark'         => __('Dark Matter (CARTO Dark)', 'supercraft-of'),
+                'light'        => __('Minimal Light (CARTO Positron)', 'supercraft-of'),
+                'esri_streets' => __('Esri World Street Map (High Detail)', 'supercraft-of'),
+                'satellite'    => __('Satellite Imagery (Esri)', 'supercraft-of'),
+                'topo'         => __('Topographic / Terrain (OpenTopoMap)', 'supercraft-of'),
+                'streets'      => __('Standard OpenStreetMap', 'supercraft-of'),
+                'custom'       => __('Custom Tile URL', 'supercraft-of'),
+            ]
+        ]);
+        add_settings_field('custom_tile_url', __('Custom Tile URL (If "Custom Tile URL" selected)', 'supercraft-of'), [$this, 'field_text'], 'supercraft-outlet-finder', 'sc_of_general', ['key' => 'custom_tile_url', 'default' => 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png']);
+        add_settings_field('custom_tile_attr', __('Custom Tile Attribution', 'supercraft-of'), [$this, 'field_text'], 'supercraft-outlet-finder', 'sc_of_general', ['key' => 'custom_tile_attr', 'default' => '&copy; OpenStreetMap &copy; CARTO']);
 
         add_settings_section(
             'sc_of_styling',
@@ -252,8 +267,10 @@ class SC_OF_Settings
             'color_dark'      => '#101010',
             'font_heading'    => 'inherit',
             'font_body'       => 'inherit',
-            'marker_style'    => 'numbered',
-            'map_style'       => 'dark',
+            'marker_style'     => 'numbered',
+            'map_style'        => 'voyager',
+            'custom_tile_url'  => 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+            'custom_tile_attr' => '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
         ];
     }
 
