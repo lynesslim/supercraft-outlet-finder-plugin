@@ -16,34 +16,6 @@ class SC_OF_Post_Type
         add_filter('manage_edit-sc_outlet_sortable_columns', [$this, 'sortable_columns']);
         add_action('pre_get_posts', [$this, 'sort_backend_outlets']);
         add_action('admin_enqueue_scripts', [$this, 'enqueue_admin']);
-        add_action('admin_menu', [$this, 'ensure_supercraft_menu'], 9);
-    }
-
-    public function ensure_supercraft_menu()
-    {
-        global $menu;
-        $has_supercraft = false;
-        if (is_array($menu)) {
-            foreach ($menu as $item) {
-                if (isset($item[2]) && $item[2] === 'supercraft') {
-                    $has_supercraft = true;
-                    break;
-                }
-            }
-        }
-        if (!$has_supercraft) {
-            add_menu_page(
-                __('Supercraft', 'supercraft-of'),
-                __('Supercraft', 'supercraft-of'),
-                'manage_options',
-                'supercraft',
-                function () {
-                    echo '<div class="wrap"><h1>' . esc_html__('Supercraft Dashboard', 'supercraft-of') . '</h1><p>' . esc_html__('Welcome to Supercraft tools.', 'supercraft-of') . '</p></div>';
-                },
-                'dashicons-admin-generic',
-                30
-            );
-        }
     }
 
     public function enqueue_admin($hook)

@@ -11,37 +11,9 @@ class SC_OF_Settings
 
     public function __construct()
     {
-        add_action('admin_menu', [$this, 'ensure_supercraft_menu'], 9);
-        add_action('admin_menu', [$this, 'add_menu_page'], 10);
+        add_action('admin_menu', [$this, 'add_menu_page'], 20);
         add_action('admin_init', [$this, 'register_settings']);
         add_action('admin_enqueue_scripts', [$this, 'enqueue_admin']);
-    }
-
-    public function ensure_supercraft_menu()
-    {
-        global $menu;
-        $has_supercraft = false;
-        if (is_array($menu)) {
-            foreach ($menu as $item) {
-                if (isset($item[2]) && $item[2] === 'supercraft') {
-                    $has_supercraft = true;
-                    break;
-                }
-            }
-        }
-        if (!$has_supercraft) {
-            add_menu_page(
-                __('Supercraft', 'supercraft-of'),
-                __('Supercraft', 'supercraft-of'),
-                'manage_options',
-                'supercraft',
-                function () {
-                    echo '<div class="wrap"><h1>' . esc_html__('Supercraft Dashboard', 'supercraft-of') . '</h1><p>' . esc_html__('Welcome to Supercraft tools.', 'supercraft-of') . '</p></div>';
-                },
-                'dashicons-admin-generic',
-                30
-            );
-        }
     }
 
     public function enqueue_admin($hook)
@@ -129,14 +101,46 @@ class SC_OF_Settings
 
     public function add_menu_page()
     {
-        add_submenu_page(
-            'supercraft',
-            __('Supercraft Outlet Finder Settings', 'supercraft-of'),
-            __('Outlet Finder Settings', 'supercraft-of'),
-            'manage_options',
-            'supercraft-outlet-finder',
-            [$this, 'render_page']
-        );
+        global $menu;
+
+        $supercraft_parent_slug = '';
+        if (is_array($menu)) {
+            foreach ($menu as $item) {
+                if (isset($item[0]) && strpos($item[0], 'Supercraft') !== false) {
+                    $supercraft_parent_slug = isset($item[2]) ? $item[2] : '';
+                    break;
+                }
+            }
+        }
+
+        if ($supercraft_parent_slug) {
+            add_submenu_page(
+                $supercraft_parent_slug,
+                __('Supercraft Outlet Finder', 'supercraft-of'),
+                __('Outlet Finder', 'supercraft-of'),
+                'manage_options',
+                'supercraft-outlet-finder',
+                [$this, 'render_page']
+            );
+        } else {
+            add_menu_page(
+                __('Supercraft Outlet Finder', 'supercraft-of'),
+                __('Supercraft', 'supercraft-of'),
+                'manage_options',
+                'supercraft-outlet-finder',
+                [$this, 'render_page'],
+                'dashicons-location-alt',
+                30
+            );
+            add_submenu_page(
+                'supercraft-outlet-finder',
+                __('Supercraft Outlet Finder', 'supercraft-of'),
+                __('Outlet Finder', 'supercraft-of'),
+                'manage_options',
+                'supercraft-outlet-finder',
+                [$this, 'render_page']
+            );
+        }
     }
 
     public function register_settings()
@@ -282,12 +286,31 @@ class SC_OF_Settings
         return isset($options[$key]) ? $options[$key] : $defaults[$key];
     }
 
+    public static function is_validated()
+    {
+        if (defined('SC_OF_ALLOW_UNVALIDATED') && SC_OF_ALLOW_UNVALIDATED) {
+            return true;
+        }
+
+        $local_status = get_option('sc_of_validation_status', 'valid') === 'valid';
+
+        return apply_filters('supercraft_is_plugin_validated', $local_status, 'supercraft-outlet-finder');
+    }
+
     public function render_page()
     {
         $active_tab = isset($_GET['tab']) ? $_GET['tab'] : 'settings';
+        $is_master_active = has_filter('supercraft_is_plugin_validated');
         ?>
         <div class="wrap">
             <h1><?php esc_html_e('Supercraft Outlet Finder Settings', 'supercraft-of'); ?></h1>
+            
+            <?php if ($is_master_active): ?>
+                <div class="notice notice-info">
+                    <p><?php esc_html_e('License validation is managed globally by the Supercraft Master Plugin.', 'supercraft-of'); ?></p>
+                </div>
+            <?php endif; ?>
+
             <h2 class="nav-tab-wrapper">
                 <a href="?page=supercraft-outlet-finder&tab=settings" class="nav-tab <?php echo $active_tab === 'settings' ? 'nav-tab-active' : ''; ?>"><?php esc_html_e('Settings', 'supercraft-of'); ?></a>
                 <a href="?page=supercraft-outlet-finder&tab=outlets" class="nav-tab <?php echo $active_tab === 'outlets' ? 'nav-tab-active' : ''; ?>"><?php esc_html_e('Manage Outlets', 'supercraft-of'); ?></a>
