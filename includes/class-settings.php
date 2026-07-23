@@ -193,6 +193,7 @@ class SC_OF_Settings
 
         $colors = [
             'color_primary'   => ['label' => __('Theme Primary Color', 'supercraft-of'), 'default' => '#F2C94C'],
+            'color_marker'    => ['label' => __('Default Marker Color', 'supercraft-of'), 'default' => '#F2C94C'],
             'color_bg'        => ['label' => __('Background', 'supercraft-of'), 'default' => '#070707'],
             'color_surface'   => ['label' => __('Surface / Card', 'supercraft-of'), 'default' => '#181818'],
             'color_surface2'  => ['label' => __('Surface Light', 'supercraft-of'), 'default' => '#202020'],
@@ -264,6 +265,7 @@ class SC_OF_Settings
             'map_zoom'        => '11',
             'fly_zoom'        => '15',
             'color_primary'   => '#F2C94C',
+            'color_marker'    => '#F2C94C',
             'color_bg'        => '#070707',
             'color_surface'   => '#181818',
             'color_surface2'  => '#202020',

@@ -1499,6 +1499,9 @@ class SC_OF_Shortcode
             }
 
             $marker_color = get_post_meta($post->ID, '_sc_outlet_marker_color', true);
+            if (empty($marker_color)) {
+                $marker_color = SC_OF_Settings::get('color_marker');
+            }
             $outlets[] = [
                 'id'    => $i,
                 'name'  => $post->post_title,
