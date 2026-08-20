@@ -454,6 +454,12 @@ class SC_OF_Shortcode
                     e.stopPropagation();
                 }, { passive: false });
             }
+            var detEl = root.querySelector('#det');
+            if (detEl) {
+                detEl.addEventListener('wheel', function (e) {
+                    e.stopPropagation();
+                }, { passive: false });
+            }
         });
         </script>
         <?php
@@ -858,7 +864,22 @@ class SC_OF_Shortcode
                 display: flex;
                 flex-direction: column;
                 padding: 28px;
-                overflow: hidden;
+                overflow-y: auto;
+                overflow-x: hidden;
+                overscroll-behavior: contain;
+            }
+
+            .sc-outlet-widget #det::-webkit-scrollbar {
+                width: 2px;
+            }
+
+            .sc-outlet-widget #det::-webkit-scrollbar-track {
+                background: transparent;
+            }
+
+            .sc-outlet-widget #det::-webkit-scrollbar-thumb {
+                background: var(--border2);
+                border-radius: 1px;
             }
 
             .sc-outlet-widget #det::after {
@@ -888,6 +909,7 @@ class SC_OF_Shortcode
                 width: fit-content;
                 position: relative;
                 z-index: 1;
+                flex-shrink: 0;
             }
 
             .sc-outlet-widget #back:hover {
@@ -926,6 +948,7 @@ class SC_OF_Shortcode
                 position: relative;
                 z-index: 1;
                 margin-bottom: 6px;
+                flex-shrink: 0;
             }
 
             .sc-outlet-widget .d-tag {
@@ -942,12 +965,14 @@ class SC_OF_Shortcode
                 position: relative;
                 z-index: 1;
                 width: fit-content;
+                flex-shrink: 0;
             }
 
-            /* Aspect ratio set to 4:3 for Featured Images in detail panel */
+            /* Fixed height for Featured Images in detail panel */
             .sc-outlet-widget .d-img-wrap {
                 width: 100%;
-                aspect-ratio: 4 / 3;
+                height: 200px;
+                flex-shrink: 0;
                 background-color: var(--surface2);
                 border-radius: 4px;
                 overflow: hidden;
@@ -962,6 +987,11 @@ class SC_OF_Shortcode
                 height: 100%;
                 object-fit: cover;
                 display: block;
+                transition: transform .4s ease;
+            }
+
+            .sc-outlet-widget .d-img-wrap:hover img {
+                transform: scale(1.05);
             }
             
             .sc-outlet-widget .d-div {
@@ -970,6 +1000,7 @@ class SC_OF_Shortcode
                 margin-bottom: 22px;
                 position: relative;
                 z-index: 1;
+                flex-shrink: 0;
             }
 
             .sc-outlet-widget .d-row {
@@ -979,6 +1010,7 @@ class SC_OF_Shortcode
                 position: relative;
                 z-index: 1;
                 align-items: flex-start;
+                flex-shrink: 0;
             }
 
             .sc-outlet-widget .d-ico {
