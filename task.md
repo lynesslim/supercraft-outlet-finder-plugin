@@ -14,3 +14,9 @@
 - [x] **Feature 3: Detail Panel & Sidebar Scroll Fix**
   - [x] Add `overflow-y: auto; overscroll-behavior: contain;` and styled scrollbar to `#det` in `class-shortcode.php`
   - [x] Add explicit `wheel` JS event listener to `#det` and `#list` to call `stopPropagation` on wheel events
+
+- [x] **Feature 4: Optional Display Switches & Outlet Description**
+  - [x] Add Display Options section and toggle switches (`show_hours`, `show_phone`, `show_call_btn`, `show_description`) to `class-settings.php`
+  - [x] Add optional `_sc_outlet_description` textarea to outlet meta box and save routine in `class-post-type.php`
+  - [x] Update frontend detail panel markup, styling, and JS in `class-shortcode.php` to conditionally render hours, phone, call button, and description
+  - [x] Bump plugin version to `1.0.18` and rebuild zip packages

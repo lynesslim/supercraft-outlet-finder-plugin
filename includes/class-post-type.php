@@ -89,6 +89,7 @@ class SC_OF_Post_Type
 
         $fields = [
             '_sc_outlet_area' => __('Area', 'supercraft-of'),
+            '_sc_outlet_description' => __('Description', 'supercraft-of'),
             '_sc_outlet_address' => __('Address', 'supercraft-of'),
             '_sc_outlet_phone' => __('Phone', 'supercraft-of'),
             '_sc_outlet_hours' => __('Operating Hours', 'supercraft-of'),
@@ -133,6 +134,12 @@ class SC_OF_Post_Type
             <label for="_sc_outlet_area"><?php esc_html_e('Area', 'supercraft-of'); ?></label>
             <input type="text" id="_sc_outlet_area" name="_sc_outlet_area"
                    value="<?php echo esc_attr($values['_sc_outlet_area']); ?>">
+        </div>
+
+        <div class="sc-of-field">
+            <label for="_sc_outlet_description"><?php esc_html_e('Description', 'supercraft-of'); ?></label>
+            <textarea id="_sc_outlet_description" name="_sc_outlet_description" rows="3" placeholder="<?php esc_attr_e('Optional description or highlight for this outlet...', 'supercraft-of'); ?>"><?php echo esc_textarea($values['_sc_outlet_description']); ?></textarea>
+            <p class="description" style="margin-top:4px;color:#888;font-size:12px;"><?php esc_html_e('Optional brief description or highlights of this outlet.', 'supercraft-of'); ?></p>
         </div>
 
         <div class="sc-of-field">
@@ -195,20 +202,30 @@ class SC_OF_Post_Type
             return;
         }
 
-        $fields = [
+        $text_fields = [
             '_sc_outlet_area',
-            '_sc_outlet_address',
             '_sc_outlet_phone',
-            '_sc_outlet_hours',
             '_sc_outlet_lat',
             '_sc_outlet_lng',
             '_sc_outlet_maps_url',
             '_sc_outlet_marker_color',
         ];
 
-        foreach ($fields as $key) {
+        foreach ($text_fields as $key) {
             if (isset($_POST[$key])) {
                 update_post_meta($post_id, $key, sanitize_text_field($_POST[$key]));
+            }
+        }
+
+        $textarea_fields = [
+            '_sc_outlet_description',
+            '_sc_outlet_address',
+            '_sc_outlet_hours',
+        ];
+
+        foreach ($textarea_fields as $key) {
+            if (isset($_POST[$key])) {
+                update_post_meta($post_id, $key, sanitize_textarea_field($_POST[$key]));
             }
         }
     }

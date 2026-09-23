@@ -35,6 +35,10 @@ class SC_OF_Shortcode
         $map_style        = SC_OF_Settings::get('map_style');
         $custom_tile_url  = SC_OF_Settings::get('custom_tile_url');
         $custom_tile_attr = SC_OF_Settings::get('custom_tile_attr');
+        $show_hours       = SC_OF_Settings::get('show_hours');
+        $show_phone       = SC_OF_Settings::get('show_phone');
+        $show_call_btn    = SC_OF_Settings::get('show_call_btn');
+        $show_description = SC_OF_Settings::get('show_description');
 
         $brand_upper = strtoupper($brand);
         $brand_parts = explode(' ', $brand_upper, 2);
@@ -76,9 +80,10 @@ class SC_OF_Shortcode
                         <div class="d-img-wrap" id="d-img-wrap" style="display:none;">
                             <img id="d-img" src="" alt="Outlet Image">
                         </div>
+                        <div class="d-desc" id="d-desc" style="display:none;"></div>
                         <div class="d-div"></div>
 
-                        <div class="d-row">
+                        <div class="d-row" id="d-row-addr">
                             <div class="d-ico">
                                 <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
                                     <circle cx="7" cy="6" r="2.5" stroke="currentColor" stroke-width="1.3" />
@@ -91,7 +96,7 @@ class SC_OF_Shortcode
                             </div>
                         </div>
 
-                        <div class="d-row">
+                        <div class="d-row" id="d-row-hrs">
                             <div class="d-ico">
                                 <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
                                     <circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.3" />
@@ -104,7 +109,7 @@ class SC_OF_Shortcode
                             </div>
                         </div>
 
-                        <div class="d-row">
+                        <div class="d-row" id="d-row-tel">
                             <div class="d-ico">
                                 <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
                                     <path d="M2 2.5C2 2.5 3 5.5 5.5 8S11.5 12 11.5 12l1-3-3-1-1 1.5S7 8.5 6 7.5 5.5 5.5 5.5 5.5L7 4.5 6 1.5 2 2.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" />
@@ -183,6 +188,10 @@ class SC_OF_Shortcode
             }
 
             const markerStyle = '<?php echo esc_js($marker_style); ?>';
+            const showHours = <?php echo $show_hours === '1' ? 'true' : 'false'; ?>;
+            const showPhone = <?php echo $show_phone === '1' ? 'true' : 'false'; ?>;
+            const showCallBtn = <?php echo $show_call_btn === '1' ? 'true' : 'false'; ?>;
+            const showDesc = <?php echo $show_description === '1' ? 'true' : 'false'; ?>;
             const outlets = <?php echo $json; ?>;
 
             const cur = root.querySelector('#cur');
@@ -386,17 +395,47 @@ class SC_OF_Shortcode
                     dImg.src = '';
                 }
 
+                const dDesc = root.querySelector('#d-desc');
+                if (showDesc && o.desc && o.desc.trim()) {
+                    dDesc.textContent = o.desc;
+                    dDesc.style.display = 'block';
+                } else {
+                    dDesc.style.display = 'none';
+                    dDesc.textContent = '';
+                }
+
                 root.querySelector('#d-addr').textContent = o.addr;
-                root.querySelector('#d-hrs').textContent = o.hrs;
-                root.querySelector('#d-tel').textContent = o.phone;
+
+                const dRowHrs = root.querySelector('#d-row-hrs');
+                if (showHours && o.hrs && o.hrs.trim()) {
+                    root.querySelector('#d-hrs').textContent = o.hrs;
+                    dRowHrs.style.display = 'flex';
+                } else {
+                    dRowHrs.style.display = 'none';
+                }
+
+                const dRowTel = root.querySelector('#d-row-tel');
+                if (showPhone && o.phone && o.phone.trim()) {
+                    root.querySelector('#d-tel').textContent = o.phone;
+                    dRowTel.style.display = 'flex';
+                } else {
+                    dRowTel.style.display = 'none';
+                }
 
                 root.querySelector('#btn-dir').onclick = function () {
                     window.open(o.maps, '_blank');
                 };
 
-                root.querySelector('#btn-call').onclick = function () {
-                    window.open('tel:' + o.phone, '_self');
-                };
+                const btnCall = root.querySelector('#btn-call');
+                if (showCallBtn && o.phone && o.phone.trim()) {
+                    btnCall.style.display = '';
+                    btnCall.onclick = function () {
+                        window.open('tel:' + o.phone, '_self');
+                    };
+                } else {
+                    btnCall.style.display = 'none';
+                    btnCall.onclick = null;
+                }
 
                 root.querySelector('#det').classList.add('open');
                 root.querySelector('#hud-loc').textContent = o.name;
@@ -993,6 +1032,17 @@ class SC_OF_Shortcode
             .sc-outlet-widget .d-img-wrap:hover img {
                 transform: scale(1.05);
             }
+
+            .sc-outlet-widget .d-desc {
+                font-size: 13px;
+                line-height: 1.6;
+                color: var(--text);
+                margin-bottom: 20px;
+                white-space: pre-line;
+                position: relative;
+                z-index: 1;
+                flex-shrink: 0;
+            }
             
             .sc-outlet-widget .d-div {
                 height: 1px;
@@ -1551,6 +1601,7 @@ class SC_OF_Shortcode
                 'addr'  => get_post_meta($post->ID, '_sc_outlet_address', true),
                 'phone' => get_post_meta($post->ID, '_sc_outlet_phone', true),
                 'hrs'   => get_post_meta($post->ID, '_sc_outlet_hours', true),
+                'desc'  => get_post_meta($post->ID, '_sc_outlet_description', true),
                 'lat'   => (float) $lat,
                 'lng'   => (float) $lng,
                 'maps'  => get_post_meta($post->ID, '_sc_outlet_maps_url', true),

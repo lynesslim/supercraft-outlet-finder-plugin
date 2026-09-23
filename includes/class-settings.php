@@ -26,6 +26,54 @@ class SC_OF_Settings
 
         add_action('admin_footer', function () {
             ?>
+            <style>
+            .sc-of-switch {
+                position: relative;
+                display: inline-block;
+                width: 44px;
+                height: 24px;
+                vertical-align: middle;
+            }
+            .sc-of-switch input {
+                opacity: 0;
+                width: 0;
+                height: 0;
+                position: absolute;
+            }
+            .sc-of-slider {
+                position: absolute;
+                cursor: pointer;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: #cbd5e1;
+                transition: .25s ease;
+                border-radius: 24px;
+            }
+            .sc-of-slider:before {
+                position: absolute;
+                content: "";
+                height: 18px;
+                width: 18px;
+                left: 3px;
+                bottom: 3px;
+                background-color: #ffffff;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+                transition: .25s ease;
+                border-radius: 50%;
+            }
+            .sc-of-switch input:checked + .sc-of-slider {
+                background-color: #2271b1;
+            }
+            .sc-of-switch input:focus-visible + .sc-of-slider {
+                outline: 2px solid #2271b1;
+                outline-offset: 2px;
+            }
+            .sc-of-switch input:checked + .sc-of-slider:before {
+                transform: translateX(20px);
+            }
+            </style>
             <script>
             jQuery(function ($) {
                 $('.sc-of-color-picker').wpColorPicker();
@@ -185,6 +233,18 @@ class SC_OF_Settings
         add_settings_field('custom_tile_attr', __('Custom Tile Attribution', 'supercraft-of'), [$this, 'field_text'], 'supercraft-outlet-finder', 'sc_of_general', ['key' => 'custom_tile_attr', 'default' => '&copy; OpenStreetMap &copy; CARTO']);
 
         add_settings_section(
+            'sc_of_display',
+            __('Display Options', 'supercraft-of'),
+            null,
+            'supercraft-outlet-finder'
+        );
+
+        add_settings_field('show_hours', __('Operating Hours', 'supercraft-of'), [$this, 'field_toggle'], 'supercraft-outlet-finder', 'sc_of_display', ['key' => 'show_hours', 'description' => __('Display operating hours in the outlet detail panel.', 'supercraft-of')]);
+        add_settings_field('show_phone', __('Phone Number', 'supercraft-of'), [$this, 'field_toggle'], 'supercraft-outlet-finder', 'sc_of_display', ['key' => 'show_phone', 'description' => __('Display phone number in the outlet detail panel.', 'supercraft-of')]);
+        add_settings_field('show_call_btn', __('"Call Outlet" Button', 'supercraft-of'), [$this, 'field_toggle'], 'supercraft-outlet-finder', 'sc_of_display', ['key' => 'show_call_btn', 'description' => __('Display the direct call action button in the outlet detail panel.', 'supercraft-of')]);
+        add_settings_field('show_description', __('Outlet Description', 'supercraft-of'), [$this, 'field_toggle'], 'supercraft-outlet-finder', 'sc_of_display', ['key' => 'show_description', 'description' => __('Display outlet description in the outlet detail panel.', 'supercraft-of')]);
+
+        add_settings_section(
             'sc_of_styling',
             __('Styling', 'supercraft-of'),
             null,
@@ -237,8 +297,14 @@ class SC_OF_Settings
     {
         $defaults = $this->defaults();
         $output = [];
+        $toggle_keys = ['show_hours', 'show_phone', 'show_call_btn', 'show_description'];
 
         foreach ($defaults as $key => $default) {
+            if (in_array($key, $toggle_keys, true)) {
+                $output[$key] = (!empty($input[$key]) && $input[$key] === '1') ? '1' : '0';
+                continue;
+            }
+
             if (isset($input[$key])) {
                 $val = sanitize_text_field($input[$key]);
                 if ($val === 'custom' && isset($_POST['sc_of_options_custom_' . $key])) {
@@ -281,6 +347,10 @@ class SC_OF_Settings
             'map_style'        => 'voyager',
             'custom_tile_url'  => 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
             'custom_tile_attr' => '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+            'show_hours'       => '1',
+            'show_phone'       => '1',
+            'show_call_btn'    => '1',
+            'show_description' => '1',
         ];
     }
 
@@ -463,6 +533,21 @@ class SC_OF_Settings
                    value="<?php echo esc_attr($custom_value); ?>"
                    class="regular-text" placeholder="e.g. 'Montserrat', sans-serif">
         </div>
+        <?php
+    }
+
+    public function field_toggle($args)
+    {
+        $value = self::get($args['key']);
+        $checked = ($value === '1' || $value === true || $value === 1);
+        ?>
+        <label class="sc-of-switch">
+            <input type="checkbox" name="sc_of_options[<?php echo esc_attr($args['key']); ?>]" value="1" <?php checked($checked, true); ?>>
+            <span class="sc-of-slider"></span>
+        </label>
+        <?php if (!empty($args['description'])) : ?>
+            <p class="description" style="margin-top: 6px;"><?php echo esc_html($args['description']); ?></p>
+        <?php endif; ?>
         <?php
     }
 }
