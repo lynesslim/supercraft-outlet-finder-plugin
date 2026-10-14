@@ -233,6 +233,94 @@ class SC_OF_Settings
         add_settings_field('custom_tile_attr', __('Custom Tile Attribution', 'supercraft-of'), [$this, 'field_text'], 'supercraft-outlet-finder', 'sc_of_general', ['key' => 'custom_tile_attr', 'default' => '&copy; OpenStreetMap &copy; CARTO']);
 
         add_settings_section(
+            'sc_of_text_labels',
+            __('Titles & Text Labels', 'supercraft-of'),
+            function () {
+                echo '<p class="description">' . esc_html__('Customize all titles, headings, placeholders, and action labels displayed across the outlet finder.', 'supercraft-of') . '</p>';
+            },
+            'supercraft-outlet-finder'
+        );
+
+        add_settings_field('text_eyebrow', __('Eyebrow Text', 'supercraft-of'), [$this, 'field_text'], 'supercraft-outlet-finder', 'sc_of_text_labels', [
+            'key' => 'text_eyebrow',
+            'default' => 'Service Network',
+            'placeholder' => 'e.g. Service Network or Outlet Finder',
+            'description' => __('Small category tag displayed above the main headline in the sidebar header.', 'supercraft-of')
+        ]);
+        add_settings_field('text_headline', __('Main Title / Headline', 'supercraft-of'), [$this, 'field_text'], 'supercraft-outlet-finder', 'sc_of_text_labels', [
+            'key' => 'text_headline',
+            'default' => 'Find an Outlet',
+            'placeholder' => 'e.g. Find an Outlet',
+            'description' => __('Main title headline displayed in the sidebar header.', 'supercraft-of')
+        ]);
+        add_settings_field('text_search_placeholder', __('Search Input Placeholder', 'supercraft-of'), [$this, 'field_text'], 'supercraft-outlet-finder', 'sc_of_text_labels', [
+            'key' => 'text_search_placeholder',
+            'default' => 'Search area or outlet…',
+            'placeholder' => 'Search area or outlet…',
+            'description' => __('Placeholder text for the search filter input field.', 'supercraft-of')
+        ]);
+        add_settings_field('text_no_results', __('No Results Found Message', 'supercraft-of'), [$this, 'field_text'], 'supercraft-outlet-finder', 'sc_of_text_labels', [
+            'key' => 'text_no_results',
+            'default' => 'No outlets found',
+            'placeholder' => 'No outlets found',
+            'description' => __('Message displayed in the outlet list when no search matches are found.', 'supercraft-of')
+        ]);
+        add_settings_field('text_back_button', __('Back Button Label', 'supercraft-of'), [$this, 'field_text'], 'supercraft-outlet-finder', 'sc_of_text_labels', [
+            'key' => 'text_back_button',
+            'default' => 'All Outlets',
+            'placeholder' => 'All Outlets',
+            'description' => __('Label on the back button in the outlet detail view to return to the list.', 'supercraft-of')
+        ]);
+        add_settings_field('text_label_address', __('Address Field Label', 'supercraft-of'), [$this, 'field_text'], 'supercraft-outlet-finder', 'sc_of_text_labels', [
+            'key' => 'text_label_address',
+            'default' => 'Address',
+            'placeholder' => 'Address',
+            'description' => __('Label displayed above the outlet address in the detail panel.', 'supercraft-of')
+        ]);
+        add_settings_field('text_label_hours', __('Operating Hours Label', 'supercraft-of'), [$this, 'field_text'], 'supercraft-outlet-finder', 'sc_of_text_labels', [
+            'key' => 'text_label_hours',
+            'default' => 'Operating Hours',
+            'placeholder' => 'Operating Hours',
+            'description' => __('Label displayed above operating hours in the detail panel.', 'supercraft-of')
+        ]);
+        add_settings_field('text_label_phone', __('Phone Field Label', 'supercraft-of'), [$this, 'field_text'], 'supercraft-outlet-finder', 'sc_of_text_labels', [
+            'key' => 'text_label_phone',
+            'default' => 'Phone',
+            'placeholder' => 'Phone',
+            'description' => __('Label displayed above the phone number in the detail panel.', 'supercraft-of')
+        ]);
+        add_settings_field('text_btn_directions', __('"Get Directions" Button Text', 'supercraft-of'), [$this, 'field_text'], 'supercraft-outlet-finder', 'sc_of_text_labels', [
+            'key' => 'text_btn_directions',
+            'default' => 'Get Directions ↗',
+            'placeholder' => 'Get Directions ↗',
+            'description' => __('Button text for opening directions in Google Maps.', 'supercraft-of')
+        ]);
+        add_settings_field('text_btn_call', __('"Call Outlet" Button Text', 'supercraft-of'), [$this, 'field_text'], 'supercraft-outlet-finder', 'sc_of_text_labels', [
+            'key' => 'text_btn_call',
+            'default' => 'Call Outlet',
+            'placeholder' => 'Call Outlet',
+            'description' => __('Button text for initiating a phone call.', 'supercraft-of')
+        ]);
+        add_settings_field('text_footer_label', __('Sidebar Count Footer Label', 'supercraft-of'), [$this, 'field_text'], 'supercraft-outlet-finder', 'sc_of_text_labels', [
+            'key' => 'text_footer_label',
+            'default' => 'Outlets in',
+            'placeholder' => 'Outlets in',
+            'description' => __('Label displayed above the region name in the sidebar bottom counter.', 'supercraft-of')
+        ]);
+        add_settings_field('text_hud_label', __('Map HUD Counter Label', 'supercraft-of'), [$this, 'field_text'], 'supercraft-outlet-finder', 'sc_of_text_labels', [
+            'key' => 'text_hud_label',
+            'default' => 'Outlets',
+            'placeholder' => 'Outlets',
+            'description' => __('Label displayed below the total outlet number on the map HUD card.', 'supercraft-of')
+        ]);
+        add_settings_field('text_loading', __('Loader Subtitle Text', 'supercraft-of'), [$this, 'field_text'], 'supercraft-outlet-finder', 'sc_of_text_labels', [
+            'key' => 'text_loading',
+            'default' => 'Locating Outlets',
+            'placeholder' => 'Locating Outlets',
+            'description' => __('Subtitle text displayed on the initial loading overlay.', 'supercraft-of')
+        ]);
+
+        add_settings_section(
             'sc_of_display',
             __('Display Options', 'supercraft-of'),
             null,
@@ -351,6 +439,19 @@ class SC_OF_Settings
             'show_phone'       => '1',
             'show_call_btn'    => '1',
             'show_description' => '1',
+            'text_eyebrow'            => 'Service Network',
+            'text_headline'           => 'Find an Outlet',
+            'text_search_placeholder' => 'Search area or outlet…',
+            'text_no_results'         => 'No outlets found',
+            'text_loading'            => 'Locating Outlets',
+            'text_back_button'        => 'All Outlets',
+            'text_label_address'      => 'Address',
+            'text_label_hours'        => 'Operating Hours',
+            'text_label_phone'        => 'Phone',
+            'text_btn_directions'     => 'Get Directions ↗',
+            'text_btn_call'           => 'Call Outlet',
+            'text_footer_label'       => 'Outlets in',
+            'text_hud_label'          => 'Outlets',
         ];
     }
 
@@ -461,9 +562,14 @@ class SC_OF_Settings
     public function field_text($args)
     {
         $value = self::get($args['key']);
+        $placeholder = $args['placeholder'] ?? '';
         ?>
         <input type="text" name="sc_of_options[<?php echo esc_attr($args['key']); ?>]"
-               value="<?php echo esc_attr($value); ?>" class="regular-text">
+               value="<?php echo esc_attr($value); ?>" class="regular-text"
+               <?php echo !empty($placeholder) ? 'placeholder="' . esc_attr($placeholder) . '"' : ''; ?>>
+        <?php if (!empty($args['description'])) : ?>
+            <p class="description" style="margin-top: 6px;"><?php echo esc_html($args['description']); ?></p>
+        <?php endif; ?>
         <?php
     }
 

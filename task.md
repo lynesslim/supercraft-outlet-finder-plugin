@@ -20,3 +20,9 @@
   - [x] Add optional `_sc_outlet_description` textarea to outlet meta box and save routine in `class-post-type.php`
   - [x] Update frontend detail panel markup, styling, and JS in `class-shortcode.php` to conditionally render hours, phone, call button, and description
   - [x] Bump plugin version to `1.0.18` and rebuild zip packages
+
+- [x] **Feature 5: Editable Titles & Text Labels**
+  - [x] Add `sc_of_text_labels` section to `class-settings.php` with all frontend editable text fields
+  - [x] Add defaults for all text fields to `defaults()` in `class-settings.php`
+  - [x] Update `class-shortcode.php` to make eyebrow, headline, search placeholder, no results message, back button, detail labels, action buttons, sidebar footer counter, and HUD label dynamically editable
+  - [x] Bump plugin version to `1.0.19` and rebuild zip packages

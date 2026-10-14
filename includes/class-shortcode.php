@@ -11,7 +11,7 @@ class SC_OF_Shortcode
         add_shortcode('supercraft_outlets', [$this, 'render']);
     }
 
-    public function render()
+    public function render($atts = [])
     {
         ob_start();
 
@@ -40,6 +40,30 @@ class SC_OF_Shortcode
         $show_call_btn    = SC_OF_Settings::get('show_call_btn');
         $show_description = SC_OF_Settings::get('show_description');
 
+        $text_eyebrow            = SC_OF_Settings::get('text_eyebrow');
+        $text_headline           = SC_OF_Settings::get('text_headline');
+        $text_search_placeholder = SC_OF_Settings::get('text_search_placeholder');
+        $text_no_results         = SC_OF_Settings::get('text_no_results');
+        $text_loading            = SC_OF_Settings::get('text_loading');
+        $text_back_button        = SC_OF_Settings::get('text_back_button');
+        $text_label_address      = SC_OF_Settings::get('text_label_address');
+        $text_label_hours        = SC_OF_Settings::get('text_label_hours');
+        $text_label_phone        = SC_OF_Settings::get('text_label_phone');
+        $text_btn_directions     = SC_OF_Settings::get('text_btn_directions');
+        $text_btn_call           = SC_OF_Settings::get('text_btn_call');
+        $text_footer_label       = SC_OF_Settings::get('text_footer_label');
+        $text_hud_label          = SC_OF_Settings::get('text_hud_label');
+
+        if (!empty($atts) && is_array($atts)) {
+            if (!empty($atts['brand'])) $brand = sanitize_text_field($atts['brand']);
+            if (!empty($atts['brand_sub'])) $brand_sub = sanitize_text_field($atts['brand_sub']);
+            if (!empty($atts['region'])) $region = sanitize_text_field($atts['region']);
+            if (!empty($atts['eyebrow'])) $text_eyebrow = sanitize_text_field($atts['eyebrow']);
+            if (!empty($atts['headline'])) $text_headline = sanitize_text_field($atts['headline']);
+            if (!empty($atts['title'])) $text_headline = sanitize_text_field($atts['title']);
+            if (!empty($atts['search_placeholder'])) $text_search_placeholder = sanitize_text_field($atts['search_placeholder']);
+        }
+
         $brand_upper = strtoupper($brand);
         $brand_parts = explode(' ', $brand_upper, 2);
         $brand_first = $brand_parts[0] ?? $brand_upper;
@@ -58,7 +82,9 @@ class SC_OF_Shortcode
 
             <div id="ldr">
                 <div class="ldr-brand"><?php echo $brand_first . $brand_last; ?></div>
-                <div class="ldr-sub">Locating Outlets</div>
+                <?php if (!empty($text_loading)) : ?>
+                    <div class="ldr-sub"><?php echo esc_html($text_loading); ?></div>
+                <?php endif; ?>
                 <div class="ldr-ring"></div>
             </div>
 
@@ -71,7 +97,7 @@ class SC_OF_Shortcode
                             <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
                                 <path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                             </svg>
-                            <span>All Outlets</span>
+                            <span><?php echo esc_html($text_back_button); ?></span>
                         </div>
 
                         <div class="d-bignum" id="d-num">01</div>
@@ -91,7 +117,7 @@ class SC_OF_Shortcode
                                 </svg>
                             </div>
                             <div>
-                                <div class="d-lbl">Address</div>
+                                <div class="d-lbl"><?php echo esc_html($text_label_address); ?></div>
                                 <div class="d-val" id="d-addr">—</div>
                             </div>
                         </div>
@@ -104,7 +130,7 @@ class SC_OF_Shortcode
                                 </svg>
                             </div>
                             <div>
-                                <div class="d-lbl">Operating Hours</div>
+                                <div class="d-lbl"><?php echo esc_html($text_label_hours); ?></div>
                                 <div class="d-val" id="d-hrs">—</div>
                             </div>
                         </div>
@@ -116,14 +142,14 @@ class SC_OF_Shortcode
                                 </svg>
                             </div>
                             <div>
-                                <div class="d-lbl">Phone</div>
+                                <div class="d-lbl"><?php echo esc_html($text_label_phone); ?></div>
                                 <div class="d-val" id="d-tel">—</div>
                             </div>
                         </div>
 
                         <div class="d-acts">
-                            <button class="btn-p" id="btn-dir">Get Directions ↗</button>
-                            <button class="btn-s" id="btn-call">Call Outlet</button>
+                            <button class="btn-p" id="btn-dir"><?php echo esc_html($text_btn_directions); ?></button>
+                            <button class="btn-s" id="btn-call"><?php echo esc_html($text_btn_call); ?></button>
                         </div>
                     </div>
 
@@ -131,12 +157,18 @@ class SC_OF_Shortcode
                         <div class="logo-row">
                             <div>
                                 <div class="brand"><?php echo $brand_first . $brand_last; ?></div>
-                                <div class="sub"><?php echo esc_html($brand_sub); ?></div>
+                                <?php if (!empty($brand_sub)) : ?>
+                                    <div class="sub"><?php echo esc_html($brand_sub); ?></div>
+                                <?php endif; ?>
                             </div>
                         </div>
 
-                        <div class="eyebrow">Service Network</div>
-                        <div class="headline">Find an Outlet</div>
+                        <?php if (!empty($text_eyebrow)) : ?>
+                            <div class="eyebrow"><?php echo esc_html($text_eyebrow); ?></div>
+                        <?php endif; ?>
+                        <?php if (!empty($text_headline)) : ?>
+                            <div class="headline"><?php echo esc_html($text_headline); ?></div>
+                        <?php endif; ?>
                     </div>
 
                     <div id="srch-wrap">
@@ -146,13 +178,13 @@ class SC_OF_Shortcode
                                 <path d="M10 10L13 13" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" />
                             </svg>
                         </span>
-                        <input type="text" id="srch" placeholder="Search area or outlet…" autocomplete="off" spellcheck="false">
+                        <input type="text" id="srch" placeholder="<?php echo esc_attr($text_search_placeholder); ?>" autocomplete="off" spellcheck="false">
                     </div>
 
                     <div id="list"></div>
 
                     <div id="ftr">
-                        <div class="ftr-label">Outlets in<br><?php echo esc_html($region); ?></div>
+                        <div class="ftr-label"><?php echo esc_html($text_footer_label); ?><?php if (!empty($text_footer_label) && !empty($region)) echo '<br>'; ?><?php echo esc_html($region); ?></div>
                         <div class="ftr-num" id="fc"><?php echo $outlet_count; ?></div>
                     </div>
 
@@ -167,7 +199,9 @@ class SC_OF_Shortcode
 
                     <div id="hud">
                         <div class="hud-big" id="hud-n"><?php echo $outlet_count; ?></div>
-                        <div class="hud-sm">Outlets</div>
+                        <?php if (!empty($text_hud_label)) : ?>
+                            <div class="hud-sm"><?php echo esc_html($text_hud_label); ?></div>
+                        <?php endif; ?>
                         <div class="hud-div"></div>
                         <div class="hud-tag" id="hud-loc"><?php echo esc_html($region); ?></div>
                     </div>
@@ -192,6 +226,7 @@ class SC_OF_Shortcode
             const showPhone = <?php echo $show_phone === '1' ? 'true' : 'false'; ?>;
             const showCallBtn = <?php echo $show_call_btn === '1' ? 'true' : 'false'; ?>;
             const showDesc = <?php echo $show_description === '1' ? 'true' : 'false'; ?>;
+            const textNoResults = <?php echo wp_json_encode($text_no_results); ?>;
             const outlets = <?php echo $json; ?>;
 
             const cur = root.querySelector('#cur');
@@ -320,7 +355,10 @@ class SC_OF_Shortcode
                 el.innerHTML = '';
 
                 if (!arr.length) {
-                    el.innerHTML = '<div class="no-res">No outlets found</div>';
+                    const nr = document.createElement('div');
+                    nr.className = 'no-res';
+                    nr.textContent = textNoResults;
+                    el.appendChild(nr);
                     fc.textContent = '0';
                     return;
                 }
@@ -389,10 +427,12 @@ class SC_OF_Shortcode
                 const dImg = root.querySelector('#d-img');
                 if (o.img) {
                     dImg.src = o.img;
+                    dImg.alt = o.name || 'Outlet Image';
                     dImgWrap.style.display = 'block';
                 } else {
                     dImgWrap.style.display = 'none';
                     dImg.src = '';
+                    dImg.alt = '';
                 }
 
                 const dDesc = root.querySelector('#d-desc');
