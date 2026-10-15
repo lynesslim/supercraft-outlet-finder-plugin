@@ -566,6 +566,33 @@ class SC_OF_Shortcode
             }
             return esc_attr($val) . ', sans-serif';
         };
+
+        $resolve_size = function ($key, $default) use ($s) {
+            $val = trim($s($key) ?? '');
+            if (empty($val)) {
+                return $default;
+            }
+            if (is_numeric($val)) {
+                return $val . 'px';
+            }
+            return esc_attr($val);
+        };
+
+        $resolve_font = function ($key, $default_type = 'body') use ($s) {
+            $val = $s($key);
+            if (empty($val) || $val === 'inherit') {
+                if ($default_type === 'primary') return 'var(--font-primary)';
+                if ($default_type === 'mono') return "'JetBrains Mono', monospace";
+                return 'var(--font-body)';
+            }
+            if ($val === 'primary') return 'var(--font-primary)';
+            if ($val === 'body') return 'var(--font-body)';
+            if ($val === 'mono') return "'JetBrains Mono', monospace";
+            if (strpos($val, 'e-global-typography') === 0) {
+                return 'var(--' . esc_attr($val) . '-font-family), sans-serif';
+            }
+            return esc_attr($val) . ', sans-serif';
+        };
         ?>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -602,6 +629,60 @@ class SC_OF_Shortcode
                 /* Typography variables - Support Elementor Global Typography with plugin fonts as fallbacks */
                 --font-primary: <?php echo $f('font_heading'); ?>;
                 --font-body: <?php echo $f('font_body'); ?>;
+
+                /* Individual Text Typography & Sizes */
+                --fs-brand: <?php echo $resolve_size('fs_brand', '26px'); ?>;
+                --ff-brand: <?php echo $resolve_font('ff_brand', 'primary'); ?>;
+                --fs-brand-sub: <?php echo $resolve_size('fs_brand_sub', '9px'); ?>;
+                --ff-brand-sub: <?php echo $resolve_font('ff_brand_sub', 'body'); ?>;
+                --fs-eyebrow: <?php echo $resolve_size('fs_eyebrow', '9px'); ?>;
+                --ff-eyebrow: <?php echo $resolve_font('ff_eyebrow', 'body'); ?>;
+                --fs-headline: <?php echo $resolve_size('fs_headline', '20px'); ?>;
+                --ff-headline: <?php echo $resolve_font('ff_headline', 'primary'); ?>;
+                --fs-search: <?php echo $resolve_size('fs_search', '14px'); ?>;
+                --ff-search: <?php echo $resolve_font('ff_search', 'body'); ?>;
+                --fs-no-res: <?php echo $resolve_size('fs_no_res', '11px'); ?>;
+                --ff-no-res: <?php echo $resolve_font('ff_no_res', 'body'); ?>;
+                --fs-item-name: <?php echo $resolve_size('fs_item_name', '15px'); ?>;
+                --ff-item-name: <?php echo $resolve_font('ff_item_name', 'body'); ?>;
+                --fs-item-area: <?php echo $resolve_size('fs_item_area', '10px'); ?>;
+                --ff-item-area: <?php echo $resolve_font('ff_item_area', 'body'); ?>;
+                --fs-item-num: <?php echo $resolve_size('fs_item_num', '11px'); ?>;
+                --ff-item-num: <?php echo $resolve_font('ff_item_num', 'primary'); ?>;
+                --fs-footer-label: <?php echo $resolve_size('fs_footer_label', '9px'); ?>;
+                --ff-footer-label: <?php echo $resolve_font('ff_footer_label', 'body'); ?>;
+                --fs-footer-num: <?php echo $resolve_size('fs_footer_num', '22px'); ?>;
+                --ff-footer-num: <?php echo $resolve_font('ff_footer_num', 'primary'); ?>;
+                --fs-back-btn: <?php echo $resolve_size('fs_back_btn', '10px'); ?>;
+                --ff-back-btn: <?php echo $resolve_font('ff_back_btn', 'body'); ?>;
+                --fs-det-title: <?php echo $resolve_size('fs_det_title', '34px'); ?>;
+                --ff-det-title: <?php echo $resolve_font('ff_det_title', 'primary'); ?>;
+                --fs-det-tag: <?php echo $resolve_size('fs_det_tag', '9px'); ?>;
+                --ff-det-tag: <?php echo $resolve_font('ff_det_tag', 'body'); ?>;
+                --fs-det-bignum: <?php echo $resolve_size('fs_det_bignum', '100px'); ?>;
+                --ff-det-bignum: <?php echo $resolve_font('ff_det_bignum', 'primary'); ?>;
+                --fs-det-desc: <?php echo $resolve_size('fs_det_desc', '13px'); ?>;
+                --ff-det-desc: <?php echo $resolve_font('ff_det_desc', 'body'); ?>;
+                --fs-det-lbl: <?php echo $resolve_size('fs_det_lbl', '9px'); ?>;
+                --ff-det-lbl: <?php echo $resolve_font('ff_det_lbl', 'body'); ?>;
+                --fs-det-val: <?php echo $resolve_size('fs_det_val', '12px'); ?>;
+                --ff-det-val: <?php echo $resolve_font('ff_det_val', 'mono'); ?>;
+                --fs-btn-dir: <?php echo $resolve_size('fs_btn_dir', '15px'); ?>;
+                --ff-btn-dir: <?php echo $resolve_font('ff_btn_dir', 'primary'); ?>;
+                --fs-btn-call: <?php echo $resolve_size('fs_btn_call', '12px'); ?>;
+                --ff-btn-call: <?php echo $resolve_font('ff_btn_call', 'body'); ?>;
+                --fs-topbar-badge: <?php echo $resolve_size('fs_topbar_badge', '9px'); ?>;
+                --ff-topbar-badge: <?php echo $resolve_font('ff_topbar_badge', 'body'); ?>;
+                --fs-hud-num: <?php echo $resolve_size('fs_hud_num', '28px'); ?>;
+                --ff-hud-num: <?php echo $resolve_font('ff_hud_num', 'primary'); ?>;
+                --fs-hud-sm: <?php echo $resolve_size('fs_hud_sm', '9px'); ?>;
+                --ff-hud-sm: <?php echo $resolve_font('ff_hud_sm', 'body'); ?>;
+                --fs-hud-loc: <?php echo $resolve_size('fs_hud_loc', '10px'); ?>;
+                --ff-hud-loc: <?php echo $resolve_font('ff_hud_loc', 'body'); ?>;
+                --fs-ldr-brand: <?php echo $resolve_size('fs_ldr_brand', '52px'); ?>;
+                --ff-ldr-brand: <?php echo $resolve_font('ff_ldr_brand', 'primary'); ?>;
+                --fs-loader: <?php echo $resolve_size('fs_loader', '9px'); ?>;
+                --ff-loader: <?php echo $resolve_font('ff_loader', 'body'); ?>;
 
                 width: 100%;
                 height: 100vh;
@@ -707,8 +788,8 @@ class SC_OF_Shortcode
             }
 
             .sc-outlet-widget .brand {
-                font-family: var(--font-primary);
-                font-size: 26px;
+                font-family: var(--ff-brand);
+                font-size: var(--fs-brand);
                 letter-spacing: 3px;
                 line-height: 1;
                 color: var(--white);
@@ -720,7 +801,8 @@ class SC_OF_Shortcode
             }
 
             .sc-outlet-widget .sub {
-                font-size: 9px;
+                font-family: var(--ff-brand-sub);
+                font-size: var(--fs-brand-sub);
                 letter-spacing: 5px;
                 text-transform: uppercase;
                 color: var(--muted);
@@ -728,7 +810,8 @@ class SC_OF_Shortcode
             }
 
             .sc-outlet-widget .eyebrow {
-                font-size: 9px;
+                font-family: var(--ff-eyebrow);
+                font-size: var(--fs-eyebrow);
                 letter-spacing: 5px;
                 text-transform: uppercase;
                 color: var(--muted);
@@ -736,8 +819,8 @@ class SC_OF_Shortcode
             }
 
             .sc-outlet-widget .headline {
-                font-family: var(--font-primary);
-                font-size: 20px;
+                font-family: var(--ff-headline);
+                font-size: var(--fs-headline);
                 letter-spacing: 2px;
                 color: var(--white);
                 line-height: 1;
@@ -768,8 +851,8 @@ class SC_OF_Shortcode
                 border-radius: 3px;
                 padding: 9px 14px 9px 36px;
                 color: var(--white);
-                font-family: var(--font-body);
-                font-size: 14px;
+                font-family: var(--ff-search);
+                font-size: var(--fs-search);
                 letter-spacing: .5px;
                 outline: none;
                 transition: border-color .2s, background .2s;
@@ -846,8 +929,8 @@ class SC_OF_Shortcode
             }
 
             .sc-outlet-widget .oi-num {
-                font-family: var(--font-primary);
-                font-size: 11px;
+                font-family: var(--ff-item-num);
+                font-size: var(--fs-item-num);
                 color: var(--gold);
                 min-width: 24px;
                 letter-spacing: 1px;
@@ -866,7 +949,8 @@ class SC_OF_Shortcode
             }
 
             .sc-outlet-widget .oi-name {
-                font-size: 15px;
+                font-family: var(--ff-item-name);
+                font-size: var(--fs-item-name);
                 font-weight: 700;
                 letter-spacing: 1.5px;
                 text-transform: uppercase;
@@ -875,7 +959,8 @@ class SC_OF_Shortcode
             }
 
             .sc-outlet-widget .oi-area {
-                font-size: 10px;
+                font-family: var(--ff-item-area);
+                font-size: var(--fs-item-area);
                 letter-spacing: 2px;
                 color: var(--muted2);
                 text-transform: uppercase;
@@ -898,7 +983,8 @@ class SC_OF_Shortcode
                 padding: 48px 28px;
                 text-align: center;
                 color: var(--muted);
-                font-size: 11px;
+                font-family: var(--ff-no-res);
+                font-size: var(--fs-no-res);
                 letter-spacing: 3px;
                 text-transform: uppercase;
             }
@@ -920,15 +1006,16 @@ class SC_OF_Shortcode
             }
 
             .sc-outlet-widget .ftr-label {
-                font-size: 9px;
+                font-family: var(--ff-footer-label);
+                font-size: var(--fs-footer-label);
                 letter-spacing: 4px;
                 text-transform: uppercase;
                 color: var(--muted);
             }
 
             .sc-outlet-widget .ftr-num {
-                font-family: var(--font-primary);
-                font-size: 22px;
+                font-family: var(--ff-footer-num);
+                font-size: var(--fs-footer-num);
                 color: var(--gold);
                 line-height: 1;
             }
@@ -979,7 +1066,8 @@ class SC_OF_Shortcode
                 align-items: center;
                 gap: 8px;
                 color: var(--muted2);
-                font-size: 10px;
+                font-family: var(--ff-back-btn);
+                font-size: var(--fs-back-btn);
                 letter-spacing: 4px;
                 text-transform: uppercase;
                 cursor: none;
@@ -1004,8 +1092,8 @@ class SC_OF_Shortcode
             }
 
             .sc-outlet-widget .d-bignum {
-                font-family: var(--font-primary);
-                font-size: 100px;
+                font-family: var(--ff-det-bignum);
+                font-size: var(--fs-det-bignum);
                 line-height: 1;
                 color: var(--surface2);
                 position: absolute;
@@ -1018,8 +1106,8 @@ class SC_OF_Shortcode
             }
 
             .sc-outlet-widget .d-title {
-                font-family: var(--font-primary);
-                font-size: 34px;
+                font-family: var(--ff-det-title);
+                font-size: var(--fs-det-title);
                 line-height: 1.05;
                 letter-spacing: 2px;
                 text-transform: uppercase;
@@ -1034,7 +1122,8 @@ class SC_OF_Shortcode
                 display: inline-block;
                 background: var(--gold);
                 color: var(--black);
-                font-size: 9px;
+                font-family: var(--ff-det-tag);
+                font-size: var(--fs-det-tag);
                 font-weight: 700;
                 letter-spacing: 3px;
                 text-transform: uppercase;
@@ -1074,7 +1163,8 @@ class SC_OF_Shortcode
             }
 
             .sc-outlet-widget .d-desc {
-                font-size: 13px;
+                font-family: var(--ff-det-desc);
+                font-size: var(--fs-det-desc);
                 line-height: 1.6;
                 color: var(--text);
                 margin-bottom: 20px;
@@ -1112,7 +1202,8 @@ class SC_OF_Shortcode
             }
 
             .sc-outlet-widget .d-lbl {
-                font-size: 9px;
+                font-family: var(--ff-det-lbl);
+                font-size: var(--fs-det-lbl);
                 letter-spacing: 3px;
                 text-transform: uppercase;
                 color: var(--muted);
@@ -1120,8 +1211,8 @@ class SC_OF_Shortcode
             }
 
             .sc-outlet-widget .d-val {
-                font-size: 12px;
-                font-family: 'JetBrains Mono', monospace;
+                font-family: var(--ff-det-val);
+                font-size: var(--fs-det-val);
                 color: var(--white);
                 line-height: 1.6;
                 letter-spacing: .3px;
@@ -1143,8 +1234,8 @@ class SC_OF_Shortcode
                 background: var(--gold);
                 color: var(--black);
                 border: none;
-                font-family: var(--font-primary);
-                font-size: 15px;
+                font-family: var(--ff-btn-dir);
+                font-size: var(--fs-btn-dir);
                 letter-spacing: 3px;
                 text-transform: uppercase;
                 cursor: none;
@@ -1167,8 +1258,8 @@ class SC_OF_Shortcode
                 background: transparent;
                 color: var(--muted2);
                 border: 1px solid var(--border2);
-                font-family: var(--font-body);
-                font-size: 12px;
+                font-family: var(--ff-btn-call);
+                font-size: var(--fs-btn-call);
                 font-weight: 600;
                 letter-spacing: 3px;
                 text-transform: uppercase;
@@ -1410,14 +1501,15 @@ class SC_OF_Shortcode
             }
 
             .sc-outlet-widget .hud-big {
-                font-family: var(--font-primary);
-                font-size: 28px;
+                font-family: var(--ff-hud-num);
+                font-size: var(--fs-hud-num);
                 color: var(--gold);
                 line-height: 1;
             }
 
             .sc-outlet-widget .hud-sm {
-                font-size: 9px;
+                font-family: var(--ff-hud-sm);
+                font-size: var(--fs-hud-sm);
                 letter-spacing: 4px;
                 text-transform: uppercase;
                 color: var(--muted);
@@ -1431,7 +1523,8 @@ class SC_OF_Shortcode
             }
 
             .sc-outlet-widget .hud-tag {
-                font-size: 10px;
+                font-family: var(--ff-hud-loc);
+                font-size: var(--fs-hud-loc);
                 letter-spacing: 3px;
                 text-transform: uppercase;
                 color: var(--muted2);
@@ -1456,7 +1549,8 @@ class SC_OF_Shortcode
                 border: 1px solid var(--border);
                 padding: 6px 14px;
                 border-radius: 2px;
-                font-size: 9px;
+                font-family: var(--ff-topbar-badge);
+                font-size: var(--fs-topbar-badge);
                 letter-spacing: 4px;
                 text-transform: uppercase;
                 color: var(--muted2);
@@ -1481,8 +1575,8 @@ class SC_OF_Shortcode
             }
 
             .sc-outlet-widget .ldr-brand {
-                font-family: var(--font-primary);
-                font-size: 52px;
+                font-family: var(--ff-ldr-brand);
+                font-size: var(--fs-ldr-brand);
                 letter-spacing: 6px;
                 color: var(--white);
                 margin-bottom: 4px;
@@ -1494,7 +1588,8 @@ class SC_OF_Shortcode
             }
 
             .sc-outlet-widget .ldr-sub {
-                font-size: 9px;
+                font-family: var(--ff-loader);
+                font-size: var(--fs-loader);
                 letter-spacing: 7px;
                 text-transform: uppercase;
                 color: var(--muted);

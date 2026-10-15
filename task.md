@@ -26,3 +26,11 @@
   - [x] Add defaults for all text fields to `defaults()` in `class-settings.php`
   - [x] Update `class-shortcode.php` to make eyebrow, headline, search placeholder, no results message, back button, detail labels, action buttons, sidebar footer counter, and HUD label dynamically editable
   - [x] Bump plugin version to `1.0.19` and rebuild zip packages
+
+- [x] **Feature 6: Granular Typography & Font Size Control**
+  - [x] Add `sc_of_typography` section to `class-settings.php` with font size and font family controls for all 26 text elements across sidebar header, search, list, detail panel, map HUD, and loader
+  - [x] Add `field_typography_item` renderer supporting font size and font family (Inherit, Primary Heading, Body, Monospace, Elementor Fonts, or Custom Font)
+  - [x] Add defaults for all font size and font family options to `defaults()` in `class-settings.php`
+  - [x] Add subnav anchor pills in settings for smooth navigation between General, Titles, Typography, Display, and Styling
+  - [x] Update `class-shortcode.php` `render_styles()` with resolvers and individual `--fs-*` and `--ff-*` CSS variables applied to each text element
+  - [x] Bump plugin version to `1.0.20` and rebuild zip packages
