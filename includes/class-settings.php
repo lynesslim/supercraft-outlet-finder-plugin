@@ -534,6 +534,14 @@ class SC_OF_Settings
                 'ff_default'  => 'primary',
                 'description' => __('Initial loading screen brand title.', 'supercraft-of'),
             ],
+            'typo_marker_num'   => [
+                'label'       => __('Map: Marker Pin Number', 'supercraft-of'),
+                'fs_key'      => 'fs_marker_num',
+                'fs_default'  => '10px',
+                'ff_key'      => 'ff_marker_num',
+                'ff_default'  => 'primary',
+                'description' => __('Numbered badge inside the map pin markers.', 'supercraft-of'),
+            ],
             'typo_loader'       => [
                 'label'       => __('Loader: Subtitle', 'supercraft-of'),
                 'fs_key'      => 'fs_loader',
@@ -742,6 +750,8 @@ class SC_OF_Settings
             'ff_hud_loc'       => 'body',
             'fs_ldr_brand'     => '52px',
             'ff_ldr_brand'     => 'primary',
+            'fs_marker_num'    => '10px',
+            'ff_marker_num'    => 'primary',
             'fs_loader'        => '9px',
             'ff_loader'        => 'body',
         ];

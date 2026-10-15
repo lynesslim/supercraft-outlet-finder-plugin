@@ -34,3 +34,9 @@
   - [x] Add subnav anchor pills in settings for smooth navigation between General, Titles, Typography, Display, and Styling
   - [x] Update `class-shortcode.php` `render_styles()` with resolvers and individual `--fs-*` and `--ff-*` CSS variables applied to each text element
   - [x] Bump plugin version to `1.0.20` and rebuild zip packages
+
+- [x] **Feature 7: Numbering Customization & Map Marker Pin Number Typography**
+  - [x] Confirm and support font size and typography controls for all numbering elements (Sidebar list number `.oi-num`, Detail watermark number `.d-bignum`, Sidebar footer total `.ftr-num`, Map HUD count `.hud-big`)
+  - [x] Add `typo_marker_num` for Map Marker Pin Number (`fs_marker_num`, `ff_marker_num`) to `class-settings.php`
+  - [x] Bind `.sc-outlet-widget .sc-core` and active marker state in `class-shortcode.php` to `--ff-marker-num` and `--fs-marker-num`
+  - [x] Bump plugin version to `1.0.21` and rebuild zip packages

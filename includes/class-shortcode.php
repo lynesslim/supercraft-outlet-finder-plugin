@@ -681,6 +681,8 @@ class SC_OF_Shortcode
                 --ff-hud-loc: <?php echo $resolve_font('ff_hud_loc', 'body'); ?>;
                 --fs-ldr-brand: <?php echo $resolve_size('fs_ldr_brand', '52px'); ?>;
                 --ff-ldr-brand: <?php echo $resolve_font('ff_ldr_brand', 'primary'); ?>;
+                --fs-marker-num: <?php echo $resolve_size('fs_marker_num', '10px'); ?>;
+                --ff-marker-num: <?php echo $resolve_font('ff_marker_num', 'primary'); ?>;
                 --fs-loader: <?php echo $resolve_size('fs_loader', '9px'); ?>;
                 --ff-loader: <?php echo $resolve_font('ff_loader', 'body'); ?>;
 
@@ -1357,8 +1359,8 @@ class SC_OF_Shortcode
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-family: var(--font-primary);
-                font-size: 10px;
+                font-family: var(--ff-marker-num);
+                font-size: var(--fs-marker-num);
                 font-weight: 700;
                 letter-spacing: .5px;
                 position: relative;
@@ -1377,7 +1379,7 @@ class SC_OF_Shortcode
                 border: 2.5px solid #ffffff;
                 width: 36px;
                 height: 36px;
-                font-size: 12px;
+                font-size: calc(var(--fs-marker-num) * 1.2);
                 box-shadow: 0 4px 18px rgba(0,0,0,0.5),
                             0 0 0 4px color-mix(in srgb, var(--mc, var(--gold)) 40%, transparent);
             }
