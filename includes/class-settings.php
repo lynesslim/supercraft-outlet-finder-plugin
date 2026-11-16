@@ -217,19 +217,16 @@ class SC_OF_Settings
         add_settings_field('map_zoom', __('Default Map Zoom', 'supercraft-of'), [$this, 'field_number'], 'supercraft-outlet-finder', 'sc_of_general', ['key' => 'map_zoom', 'default' => '11', 'min' => 1, 'max' => 20]);
         add_settings_field('fly_zoom', __('Fly-to Zoom Level', 'supercraft-of'), [$this, 'field_number'], 'supercraft-outlet-finder', 'sc_of_general', ['key' => 'fly_zoom', 'default' => '15', 'min' => 1, 'max' => 20]);
         add_settings_field('marker_style', __('Marker Style', 'supercraft-of'), [$this, 'field_select'], 'supercraft-outlet-finder', 'sc_of_general', ['key' => 'marker_style', 'default' => 'numbered', 'options' => ['numbered' => __('Numbered (Default)', 'supercraft-of'), 'pinpoint' => __('Pinpoint', 'supercraft-of')]]);
+        $map_style_options = [];
+        foreach (self::get_map_presets() as $key => $preset) {
+            $map_style_options[$key] = $preset['label'];
+        }
+        $map_style_options['custom'] = __('Custom Tile URL', 'supercraft-of');
+
         add_settings_field('map_style', __('Map Tile Style', 'supercraft-of'), [$this, 'field_select'], 'supercraft-outlet-finder', 'sc_of_general', [
-            'key' => 'map_style',
+            'key'     => 'map_style',
             'default' => 'voyager',
-            'options' => [
-                'voyager'      => __('Modern Colorful (CARTO Voyager - Recommended)', 'supercraft-of'),
-                'dark'         => __('Dark Matter (CARTO Dark)', 'supercraft-of'),
-                'light'        => __('Minimal Light (CARTO Positron)', 'supercraft-of'),
-                'esri_streets' => __('Esri World Street Map (High Detail)', 'supercraft-of'),
-                'satellite'    => __('Satellite Imagery (Esri)', 'supercraft-of'),
-                'topo'         => __('Topographic / Terrain (OpenTopoMap)', 'supercraft-of'),
-                'streets'      => __('Standard OpenStreetMap', 'supercraft-of'),
-                'custom'       => __('Custom Tile URL', 'supercraft-of'),
-            ]
+            'options' => $map_style_options,
         ]);
         add_settings_field('custom_tile_url', __('Custom Tile URL (If "Custom Tile URL" selected)', 'supercraft-of'), [$this, 'field_text'], 'supercraft-outlet-finder', 'sc_of_general', ['key' => 'custom_tile_url', 'default' => 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png']);
         add_settings_field('custom_tile_attr', __('Custom Tile Attribution', 'supercraft-of'), [$this, 'field_text'], 'supercraft-outlet-finder', 'sc_of_general', ['key' => 'custom_tile_attr', 'default' => '&copy; OpenStreetMap &copy; CARTO']);
@@ -652,6 +649,174 @@ class SC_OF_Settings
             }
         }
         return $output;
+    }
+
+    /**
+     * Return all free, no-API-key Leaflet tile presets.
+     *
+     * @return array<string, array{label:string, url:string, attr:string, subdomains:string, max_zoom:int}>
+     */
+    public static function get_map_presets()
+    {
+        $osm_attr   = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+        $carto_attr = $osm_attr . ' &copy; <a href="https://carto.com/attributions">CARTO</a>';
+
+        return [
+            'voyager' => [
+                'label'      => __('Modern Colorful (CARTO Voyager - Recommended)', 'supercraft-of'),
+                'url'        => 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+                'attr'       => $carto_attr,
+                'subdomains' => 'abcd',
+                'max_zoom'   => 20,
+            ],
+            'voyager_nolabels' => [
+                'label'      => __('CARTO Voyager (No Labels)', 'supercraft-of'),
+                'url'        => 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png',
+                'attr'       => $carto_attr,
+                'subdomains' => 'abcd',
+                'max_zoom'   => 20,
+            ],
+            'light' => [
+                'label'      => __('Minimal Light (CARTO Positron)', 'supercraft-of'),
+                'url'        => 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
+                'attr'       => $carto_attr,
+                'subdomains' => 'abcd',
+                'max_zoom'   => 20,
+            ],
+            'light_nolabels' => [
+                'label'      => __('CARTO Positron (No Labels)', 'supercraft-of'),
+                'url'        => 'https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png',
+                'attr'       => $carto_attr,
+                'subdomains' => 'abcd',
+                'max_zoom'   => 20,
+            ],
+            'dark' => [
+                'label'      => __('Dark Matter (CARTO Dark)', 'supercraft-of'),
+                'url'        => 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+                'attr'       => $carto_attr,
+                'subdomains' => 'abcd',
+                'max_zoom'   => 20,
+            ],
+            'dark_nolabels' => [
+                'label'      => __('CARTO Dark Matter (No Labels)', 'supercraft-of'),
+                'url'        => 'https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png',
+                'attr'       => $carto_attr,
+                'subdomains' => 'abcd',
+                'max_zoom'   => 20,
+            ],
+            'esri_streets' => [
+                'label'      => __('Esri World Street Map (High Detail)', 'supercraft-of'),
+                'url'        => 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+                'attr'       => 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012',
+                'subdomains' => 'abc',
+                'max_zoom'   => 19,
+            ],
+            'esri_topo' => [
+                'label'      => __('Esri World Topo Map', 'supercraft-of'),
+                'url'        => 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
+                'attr'       => 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community',
+                'subdomains' => 'abc',
+                'max_zoom'   => 19,
+            ],
+            'satellite' => [
+                'label'      => __('Satellite Imagery (Esri)', 'supercraft-of'),
+                'url'        => 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+                'attr'       => 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+                'subdomains' => 'abc',
+                'max_zoom'   => 19,
+            ],
+            'esri_gray' => [
+                'label'      => __('Esri World Gray Canvas', 'supercraft-of'),
+                'url'        => 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+                'attr'       => 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
+                'subdomains' => 'abc',
+                'max_zoom'   => 16,
+            ],
+            'esri_natgeo' => [
+                'label'      => __('Esri National Geographic World Map', 'supercraft-of'),
+                'url'        => 'https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}',
+                'attr'       => 'Tiles &copy; Esri &mdash; National Geographic, Esri, DeLorme, NAVTEQ, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, iPC',
+                'subdomains' => 'abc',
+                'max_zoom'   => 16,
+            ],
+            'esri_terrain' => [
+                'label'      => __('Esri World Terrain', 'supercraft-of'),
+                'url'        => 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Terrain_Base/MapServer/tile/{z}/{y}/{x}',
+                'attr'       => 'Tiles &copy; Esri &mdash; Source: USGS, Esri, TANA, DeLorme, and NPS',
+                'subdomains' => 'abc',
+                'max_zoom'   => 13,
+            ],
+            'esri_shaded' => [
+                'label'      => __('Esri World Shaded Relief', 'supercraft-of'),
+                'url'        => 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/{z}/{y}/{x}',
+                'attr'       => 'Tiles &copy; Esri &mdash; Source: Esri',
+                'subdomains' => 'abc',
+                'max_zoom'   => 13,
+            ],
+            'esri_physical' => [
+                'label'      => __('Esri World Physical Map', 'supercraft-of'),
+                'url'        => 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Physical_Map/MapServer/tile/{z}/{y}/{x}',
+                'attr'       => 'Tiles &copy; Esri &mdash; Source: US National Park Service',
+                'subdomains' => 'abc',
+                'max_zoom'   => 8,
+            ],
+            'esri_ocean' => [
+                'label'      => __('Esri Ocean Basemap', 'supercraft-of'),
+                'url'        => 'https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}',
+                'attr'       => 'Tiles &copy; Esri &mdash; Sources: GEBCO, NOAA, CHS, OSU, UNH, CSUMB, National Geographic, DeLorme, NAVTEQ, and Esri',
+                'subdomains' => 'abc',
+                'max_zoom'   => 13,
+            ],
+            'streets' => [
+                'label'      => __('Standard OpenStreetMap', 'supercraft-of'),
+                'url'        => 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                'attr'       => $osm_attr,
+                'subdomains' => 'abc',
+                'max_zoom'   => 19,
+            ],
+            'osm_de' => [
+                'label'      => __('OpenStreetMap DE', 'supercraft-of'),
+                'url'        => 'https://tile.openstreetmap.de/{z}/{x}/{y}.png',
+                'attr'       => $osm_attr,
+                'subdomains' => 'abc',
+                'max_zoom'   => 18,
+            ],
+            'osm_fr' => [
+                'label'      => __('OpenStreetMap France', 'supercraft-of'),
+                'url'        => 'https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png',
+                'attr'       => '&copy; OpenStreetMap France | ' . $osm_attr,
+                'subdomains' => 'abc',
+                'max_zoom'   => 20,
+            ],
+            'osm_hot' => [
+                'label'      => __('OpenStreetMap Humanitarian (HOT)', 'supercraft-of'),
+                'url'        => 'https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',
+                'attr'       => $osm_attr . ', Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>',
+                'subdomains' => 'abc',
+                'max_zoom'   => 19,
+            ],
+            'topo' => [
+                'label'      => __('Topographic / Terrain (OpenTopoMap)', 'supercraft-of'),
+                'url'        => 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+                'attr'       => 'Map data: ' . $osm_attr . ', <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
+                'subdomains' => 'abc',
+                'max_zoom'   => 17,
+            ],
+            'opnv' => [
+                'label'      => __('OPNVKarte (Public Transport)', 'supercraft-of'),
+                'url'        => 'https://tileserver.memomaps.de/tilegen/{z}/{x}/{y}.png',
+                'attr'       => 'Map <a href="https://memomaps.de/">memomaps.de</a> <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, map data ' . $osm_attr,
+                'subdomains' => 'abc',
+                'max_zoom'   => 18,
+            ],
+            'cyclosm' => [
+                'label'      => __('CyclOSM (Cycling & Streets)', 'supercraft-of'),
+                'url'        => 'https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png',
+                'attr'       => '<a href="https://github.com/cyclosm/cyclosm-cartocss-style/releases" title="CyclOSM - Open Bicycle render">CyclOSM</a> | Map data: ' . $osm_attr,
+                'subdomains' => 'abc',
+                'max_zoom'   => 20,
+            ],
+        ];
     }
 
     private function defaults()

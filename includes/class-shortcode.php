@@ -269,39 +269,28 @@ class SC_OF_Shortcode
                 position: 'bottomright'
             }).addTo(map);
 
-            var tileUrl = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
-            var tileAttr = '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/attributions">CARTO</a>';
-            var subdomains = 'abcd';
-
-            <?php if ($map_style === 'dark') : ?>
-            tileUrl = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
-            <?php elseif ($map_style === 'light') : ?>
-            tileUrl = 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
-            <?php elseif ($map_style === 'esri_streets') : ?>
-            tileUrl = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}';
-            tileAttr = 'Tiles &copy; Esri';
-            subdomains = 'abc';
-            <?php elseif ($map_style === 'satellite') : ?>
-            tileUrl = 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
-            tileAttr = 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community';
-            subdomains = 'abc';
-            <?php elseif ($map_style === 'topo') : ?>
-            tileUrl = 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png';
-            tileAttr = 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a>';
-            subdomains = 'abc';
-            <?php elseif ($map_style === 'streets') : ?>
-            tileUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
-            tileAttr = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
-            subdomains = 'abc';
-            <?php elseif ($map_style === 'custom' && !empty($custom_tile_url)) : ?>
-            tileUrl = <?php echo json_encode($custom_tile_url); ?>;
-            tileAttr = <?php echo json_encode($custom_tile_attr); ?>;
-            <?php endif; ?>
+            <?php
+            $presets = SC_OF_Settings::get_map_presets();
+            if ($map_style === 'custom' && !empty($custom_tile_url)) {
+                $tile_config = [
+                    'url'        => $custom_tile_url,
+                    'attr'       => $custom_tile_attr,
+                    'subdomains' => 'abcd',
+                    'max_zoom'   => 20,
+                ];
+            } else {
+                $tile_config = $presets[$map_style] ?? $presets['voyager'];
+            }
+            ?>
+            var tileUrl = <?php echo wp_json_encode($tile_config['url']); ?>;
+            var tileAttr = <?php echo wp_json_encode($tile_config['attr']); ?>;
+            var subdomains = <?php echo wp_json_encode($tile_config['subdomains']); ?>;
+            var tileMaxZoom = <?php echo (int) $tile_config['max_zoom']; ?>;
 
             L.tileLayer(tileUrl, {
                 attribution: tileAttr,
                 subdomains: subdomains,
-                maxZoom: 20
+                maxZoom: tileMaxZoom
             }).addTo(map);
 
             const markers = {};
